@@ -3,9 +3,11 @@ import { ReactNode } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from "@/components/ui/sidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { LogOut, User, Users, Settings, Layout, FileText, Upload } from 'lucide-react';
+import { LogOut, User, Users, Settings, Layout, FileText, Upload, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '@/contexts/ThemeContext';
+import { Switch } from '@/components/ui/switch';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -14,6 +16,7 @@ interface DashboardLayoutProps {
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const { theme, setTheme } = useTheme();
   
   const getSidebarItems = () => {
     switch (user?.role) {
@@ -77,14 +80,30 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           </SidebarContent>
           
           <SidebarFooter className="p-4">
-            <Button 
-              variant="ghost" 
-              className="w-full justify-start text-sidebar-foreground hover:text-white hover:bg-sidebar-accent"
-              onClick={logout}
-            >
-              <LogOut className="mr-2 h-4 w-4" />
-              Logout
-            </Button>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between mb-2 px-2 py-1">
+                <div className="flex items-center">
+                  {theme === 'dark' ? (
+                    <Moon className="h-4 w-4 text-sidebar-foreground mr-2" />
+                  ) : (
+                    <Sun className="h-4 w-4 text-sidebar-foreground mr-2" />
+                  )}
+                  <span className="text-sm text-sidebar-foreground">Dark Mode</span>
+                </div>
+                <Switch 
+                  checked={theme === 'dark'} 
+                  onCheckedChange={() => setTheme(theme === 'dark' ? 'light' : 'dark')} 
+                />
+              </div>
+              <Button 
+                variant="ghost" 
+                className="w-full justify-start text-sidebar-foreground hover:text-white hover:bg-sidebar-accent"
+                onClick={logout}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                Logout
+              </Button>
+            </div>
           </SidebarFooter>
         </Sidebar>
         

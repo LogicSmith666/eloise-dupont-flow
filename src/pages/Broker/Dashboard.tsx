@@ -118,10 +118,10 @@ const BrokerDashboard = () => {
                   <div>
                     <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium 
                       ${app.status === 'Approved' 
-                        ? 'bg-green-100 text-green-800' 
+                        ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' 
                         : app.status === 'Rejected' 
-                          ? 'bg-red-100 text-red-800' 
-                          : 'bg-yellow-100 text-yellow-800'
+                          ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' 
+                          : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
                       }`}
                     >
                       {app.status}
@@ -129,7 +129,12 @@ const BrokerDashboard = () => {
                   </div>
                   <div>{app.date}</div>
                   <div className="text-right">
-                    <Button variant="ghost" size="sm" className="flex items-center">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="flex items-center"
+                      onClick={() => navigate(`/broker/applications/${app.id}`)}
+                    >
                       View <ArrowRight className="ml-1 h-4 w-4" />
                     </Button>
                   </div>
