@@ -1,0 +1,109 @@
+
+import { ReactNode } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { LogOut, User, Users, Settings, Layout, FileText, Upload } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
+
+interface DashboardLayoutProps {
+  children: ReactNode;
+}
+
+const DashboardLayout = ({ children }: DashboardLayoutProps) => {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  
+  const getSidebarItems = () => {
+    switch (user?.role) {
+      case 'superadmin':
+        return [
+          { label: 'Dashboard', icon: Layout, path: '/admin/dashboard' },
+          { label: 'Firms', icon: Users, path: '/admin/firms' },
+          { label: 'Settings', icon: Settings, path: '/admin/settings' },
+        ];
+      case 'firmadmin':
+        return [
+          { label: 'Dashboard', icon: Layout, path: '/firm/dashboard' },
+          { label: 'Brokers', icon: Users, path: '/firm/brokers' },
+          { label: 'Applications', icon: FileText, path: '/firm/applications' },
+          { label: 'Settings', icon: Settings, path: '/firm/settings' },
+        ];
+      case 'broker':
+        return [
+          { label: 'Dashboard', icon: Layout, path: '/broker/dashboard' },
+          { label: 'Upload Documents', icon: Upload, path: '/broker/upload' },
+          { label: 'Applications', icon: FileText, path: '/broker/applications' },
+          { label: 'Settings', icon: Settings, path: '/broker/settings' },
+        ];
+      default:
+        return [];
+    }
+  };
+
+  const sidebarItems = getSidebarItems();
+
+  return (
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full">
+        <Sidebar>
+          <SidebarHeader className="p-4">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-full bg-eloise-accent text-white flex items-center justify-center font-semibold">
+                {user?.name.charAt(0) || 'E'}
+              </div>
+              <div className="flex flex-col">
+                <div className="font-medium text-sm text-white truncate">{user?.name || 'User'}</div>
+                <div className="text-xs text-sidebar-foreground/70 capitalize">{user?.role}</div>
+              </div>
+            </div>
+          </SidebarHeader>
+          
+          <SidebarContent className="p-2">
+            <div className="space-y-1">
+              {sidebarItems.map((item, index) => (
+                <Button
+                  key={index}
+                  variant="ghost"
+                  className="w-full justify-start text-sidebar-foreground hover:text-white hover:bg-sidebar-accent"
+                  onClick={() => navigate(item.path)}
+                >
+                  <item.icon className="mr-2 h-4 w-4" />
+                  {item.label}
+                </Button>
+              ))}
+            </div>
+          </SidebarContent>
+          
+          <SidebarFooter className="p-4">
+            <Button 
+              variant="ghost" 
+              className="w-full justify-start text-sidebar-foreground hover:text-white hover:bg-sidebar-accent"
+              onClick={logout}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
+            </Button>
+          </SidebarFooter>
+        </Sidebar>
+        
+        <div className="flex-1 p-6 overflow-auto">
+          <div className="mb-6 flex justify-between items-center">
+            <div>
+              <SidebarTrigger />
+            </div>
+            <div className="text-sm text-muted-foreground">
+              {user?.firmName && `${user.firmName} · `}
+              {user?.email}
+            </div>
+          </div>
+          
+          {children}
+        </div>
+      </div>
+    </SidebarProvider>
+  );
+};
+
+export default DashboardLayout;
