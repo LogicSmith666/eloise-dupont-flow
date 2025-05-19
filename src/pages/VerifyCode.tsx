@@ -92,10 +92,6 @@ const VerifyCode = () => {
     navigate('/login');
   };
 
-  if (!pendingUser) {
-    return null; // Will redirect via useEffect
-  }
-
   return (
     <MainLayout>
       <div className="container flex items-center justify-center min-h-[calc(100vh-8rem)] py-12">
@@ -103,7 +99,7 @@ const VerifyCode = () => {
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-bold">Verification Required</CardTitle>
             <CardDescription>
-              Enter the 6-digit code sent to {pendingUser.email}
+              {pendingUser && `Enter the 6-digit code sent to ${pendingUser.email}`}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -115,7 +111,7 @@ const VerifyCode = () => {
                 render={({ slots }) => (
                   <InputOTPGroup>
                     {slots.map((slot, index) => (
-                      <InputOTPSlot key={index} {...slot} index={index} />
+                      <InputOTPSlot key={index} {...slot} />
                     ))}
                   </InputOTPGroup>
                 )}

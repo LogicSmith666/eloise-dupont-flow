@@ -14,7 +14,7 @@ export interface User {
   firmName?: string;
 }
 
-interface PendingUser {
+export interface PendingUser {
   id: string;
   email: string;
   role: UserRole;

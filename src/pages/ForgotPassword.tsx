@@ -33,6 +33,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
 const ForgotPassword = () => {
@@ -121,14 +122,14 @@ const ForgotPassword = () => {
               className="w-full"
               disabled={!email || loading || isSubmitting}
             >
-              {isSubmitting ? "Sending..." : "Send Reset Email"}
+              {isSubmitting ? "Sending..." : "Send Reset Link"}
             </Button>
             
             {isResetSent && (
               <div className="mt-6 space-y-4">
                 <div className="bg-muted p-4 rounded-md">
                   <p className="text-sm font-medium">
-                    Reset email sent to {email}
+                    Reset link sent to {email}
                   </p>
                 </div>
                 
@@ -145,14 +146,13 @@ const ForgotPassword = () => {
                 </div>
                 
                 <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
-                  <AlertDialogTrigger asChild>
-                    <Button 
-                      className="w-full" 
-                      disabled={!newPassword || isChanging}
-                    >
-                      Change Password
-                    </Button>
-                  </AlertDialogTrigger>
+                  <Button 
+                    className="w-full" 
+                    disabled={!newPassword || isChanging}
+                    onClick={() => setIsConfirmDialogOpen(true)}
+                  >
+                    Change Password
+                  </Button>
                   <AlertDialogContent>
                     <AlertDialogHeader>
                       <AlertDialogTitle>Confirm Password Change</AlertDialogTitle>
