@@ -185,37 +185,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setLoading(true);
       
       // In a real app, make API call to register user
-      // For MVP, we'll just simulate success
-      
-      // Generate a mock user
-      const newUser: User = {
-        id: `user-${Date.now()}`,
-        name,
-        email,
-        role,
-        firmId,
-        firmName: firmId === '101' ? 'Finance Pro Inc.' : undefined
-      };
-      
-      // Set as pending user for verification
-      setPendingUser({
-        id: newUser.id,
-        email: newUser.email,
-        role: newUser.role,
-      });
-      
-      // Generate and "send" verification code
-      const code = generateCode();
-      setVerificationCode(code);
-      
-      console.log(`Verification code for new signup ${email}: ${code}`); // For demo only
+      // For MVP, we'll just simulate success after a delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
       toast({
         title: "Registration successful",
-        description: "Please verify your email to continue",
+        description: "Account created successfully. You can now log in.",
       });
       
-      navigate('/verify-code');
+      navigate('/login');
     } catch (error) {
       console.error('Signup error:', error);
       toast({
