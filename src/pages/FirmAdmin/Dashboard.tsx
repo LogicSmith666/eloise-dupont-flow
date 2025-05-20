@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
 import { FileText, Upload, User } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import InviteModal from "@/components/invites/InviteModal";
+import { useInvite } from "@/contexts/InviteContext";
 
 // Mock data for broker dashboard
 const MOCK_BROKERS = [
@@ -23,15 +26,37 @@ const MOCK_APPLICATIONS = [
 
 const FirmAdminDashboard = () => {
   const { user } = useAuth();
+  const { getFirmInvites } = useInvite();
+  const navigate = useNavigate();
+  
+  const firmInvites = user?.firmId ? getFirmInvites(user.firmId) : [];
+  const pendingInvites = firmInvites.filter(invite => invite.status === 'pending');
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Firm Admin Dashboard</h1>
-          <p className="text-muted-foreground">
-            {user?.firmName || "Your Firm"} - Manage brokers and monitor applications.
-          </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Firm Admin Dashboard</h1>
+            <p className="text-muted-foreground">
+              {user?.firmName || "Your Firm"} - Manage brokers and monitor applications.
+            </p>
+          </div>
+          <div className="flex space-x-4">
+            <InviteModal
+              title="Invite Broker"
+              description="Send an invitation to a broker to join your firm."
+              triggerText="Invite Broker"
+              role="firmadmin"
+              firmId={user?.firmId}
+            />
+            <Button 
+              variant="outline"
+              onClick={() => navigate('/firm/brokers')}
+            >
+              Manage Brokers
+            </Button>
+          </div>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -72,10 +97,17 @@ const FirmAdminDashboard = () => {
           
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Average Funding</CardTitle>
+              <CardTitle className="text-sm font-medium">Pending Invites</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">$95,000</div>
+              <div className="text-3xl font-bold">{pendingInvites.length}</div>
+              <Button 
+                variant="link" 
+                className="p-0 h-auto text-xs text-muted-foreground"
+                onClick={() => navigate('/firm/brokers')}
+              >
+                View invites
+              </Button>
             </CardContent>
           </Card>
         </div>
@@ -88,10 +120,13 @@ const FirmAdminDashboard = () => {
                   <CardTitle>Brokers</CardTitle>
                   <CardDescription>Manage your team of brokers.</CardDescription>
                 </div>
-                <Button size="sm" className="flex items-center gap-1">
-                  <User className="h-4 w-4" />
-                  Add Broker
-                </Button>
+                <InviteModal
+                  title="Invite Broker"
+                  description="Send an invitation to a broker to join your firm."
+                  triggerText="Add Broker"
+                  role="firmadmin"
+                  firmId={user?.firmId}
+                />
               </div>
             </CardHeader>
             <CardContent>

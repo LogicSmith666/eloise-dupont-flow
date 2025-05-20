@@ -4,8 +4,10 @@ import { useNavigate } from "react-router-dom";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react";
+import { Search, UserPlus } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import InviteModal from "@/components/invites/InviteModal";
+import { useInvite } from "@/contexts/InviteContext";
 
 // Mock data for dashboard
 const MOCK_FIRMS = [
@@ -18,19 +20,40 @@ const MOCK_FIRMS = [
 const SuperAdminDashboard = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
+  const { getAllInvites } = useInvite();
   
   const filteredFirms = MOCK_FIRMS.filter(firm => 
     firm.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  
+  const allInvites = getAllInvites();
+  const pendingInvites = allInvites.filter(invite => invite.status === 'pending');
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Super Admin Dashboard</h1>
-          <p className="text-muted-foreground">
-            Manage firms and monitor platform activity.
-          </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Super Admin Dashboard</h1>
+            <p className="text-muted-foreground">
+              Manage firms and monitor platform activity.
+            </p>
+          </div>
+          <div className="flex items-center space-x-4">
+            <InviteModal
+              title="Invite Firm Admin"
+              description="Send an invitation to a firm admin to join the platform."
+              triggerText="Invite Firm Admin"
+              role="superadmin"
+              firms={MOCK_FIRMS}
+            />
+            <Button 
+              variant="outline"
+              onClick={() => navigate('/admin/invites')}
+            >
+              View All Invites
+            </Button>
+          </div>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -76,13 +99,17 @@ const SuperAdminDashboard = () => {
           
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Processing Rate</CardTitle>
+              <CardTitle className="text-sm font-medium">Pending Invites</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">92%</div>
-              <p className="text-xs text-muted-foreground mt-1">
-                +5% from last month
-              </p>
+              <div className="text-3xl font-bold">{pendingInvites.length}</div>
+              <Button 
+                variant="link" 
+                className="p-0 h-auto text-xs text-muted-foreground"
+                onClick={() => navigate('/admin/invites')}
+              >
+                View all invites
+              </Button>
             </CardContent>
           </Card>
         </div>
@@ -118,7 +145,7 @@ const SuperAdminDashboard = () => {
                   <div className="font-medium">{firm.name}</div>
                   <div>{firm.brokers}</div>
                   <div>{firm.activeApplications}</div>
-                  <div className="text-right">
+                  <div className="text-right space-x-2">
                     <Button 
                       variant="outline" 
                       size="sm"
@@ -126,13 +153,21 @@ const SuperAdminDashboard = () => {
                     >
                       View Details
                     </Button>
+                    <InviteModal
+                      title="Invite Firm Admin"
+                      description={`Send an invitation to a firm admin for ${firm.name}.`}
+                      triggerText="Invite Admin"
+                      role="superadmin"
+                      firms={[firm]}
+                      firmId={firm.id}
+                    />
                   </div>
                 </div>
               ))}
             </div>
             
             <div className="flex justify-end">
-              <Button>
+              <Button onClick={() => navigate('/admin/invites')}>
                 Create New Firm
               </Button>
             </div>
