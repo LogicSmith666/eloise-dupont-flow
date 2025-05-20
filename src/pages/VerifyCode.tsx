@@ -110,8 +110,8 @@ const VerifyCode = () => {
                 onChange={setCode}
                 render={({ slots }) => (
                   <InputOTPGroup>
-                    {slots.map((slot, i) => (
-                      <InputOTPSlot key={i} {...slot} />
+                    {slots.map((slot, index) => (
+                      <InputOTPSlot key={index} {...slot} index={index} />
                     ))}
                   </InputOTPGroup>
                 )}

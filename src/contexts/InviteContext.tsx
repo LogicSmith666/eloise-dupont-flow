@@ -4,6 +4,14 @@ import { Invite } from '@/types/invite';
 import { toast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 
+// Mock firms data needed for the context
+const MOCK_FIRMS = [
+  { id: '101', name: 'Finance Pro Inc.', brokers: 5, activeApplications: 24 },
+  { id: '102', name: 'Capital Solutions LLC', brokers: 3, activeApplications: 17 },
+  { id: '103', name: 'Funding Experts Group', brokers: 8, activeApplications: 32 },
+  { id: '104', name: 'Business Capital Partners', brokers: 4, activeApplications: 21 },
+];
+
 // Mock initial invites
 const MOCK_INVITES: Invite[] = [
   {
@@ -195,14 +203,6 @@ export const InviteProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     </InviteContext.Provider>
   );
 };
-
-// Mock firms data needed for the context
-const MOCK_FIRMS = [
-  { id: '101', name: 'Finance Pro Inc.', brokers: 5, activeApplications: 24 },
-  { id: '102', name: 'Capital Solutions LLC', brokers: 3, activeApplications: 17 },
-  { id: '103', name: 'Funding Experts Group', brokers: 8, activeApplications: 32 },
-  { id: '104', name: 'Business Capital Partners', brokers: 4, activeApplications: 21 },
-];
 
 export const useInvite = () => {
   const context = useContext(InviteContext);

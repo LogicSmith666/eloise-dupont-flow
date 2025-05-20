@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import { Button } from '@/components/ui/button'; // Added missing import
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -46,7 +47,7 @@ const InviteManagement = () => {
               title="Invite Firm Admin"
               description="Send an invitation to a firm admin to join the platform."
               triggerText="Invite Firm Admin"
-              role="superadmin"
+              role="firmadmin"
               firms={firms}
             />
             <Button 
