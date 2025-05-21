@@ -14,22 +14,13 @@ export interface User {
   firmName?: string;
 }
 
-export interface PendingUser {
-  id: string;
-  email: string;
-  role: UserRole;
-}
-
 interface AuthContextType {
   user: User | null;
-  pendingUser: PendingUser | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   signup: (name: string, email: string, password: string, role: UserRole, firmId?: string) => Promise<void>;
   logout: () => void;
   resetPassword: (email: string) => Promise<void>;
-  verifyLoginCode: (code: string) => Promise<void>;
-  resendLoginCode: () => Promise<void>;
   isAuthenticated: boolean;
 }
 
@@ -44,9 +35,7 @@ const MOCK_USERS: User[] = [
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [pendingUser, setPendingUser] = useState<PendingUser | null>(null);
   const [loading, setLoading] = useState(true);
-  const [verificationCode, setVerificationCode] = useState<string | null>(null);
   const navigate = useNavigate();
 
   // Check for logged-in user in localStorage on initial load
@@ -58,39 +47,32 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setLoading(false);
   }, []);
 
-  // Generate a random 6-digit code
-  const generateCode = () => {
-    return Math.floor(100000 + Math.random() * 900000).toString();
-  };
-
   const login = async (email: string, password: string) => {
     try {
       setLoading(true);
       
-      // In a real app, make API call to validate credentials
-      // For MVP, we'll use our mock data
+      // Check existing mock users first
       const mockUser = MOCK_USERS.find(u => u.email === email);
       
-      if (mockUser && password === 'password') { // Simple password check for demo
-        // Instead of directly setting the user, we'll set a pending user
-        setPendingUser({
-          id: mockUser.id,
-          email: mockUser.email,
-          role: mockUser.role,
-        });
+      // Check for newly registered users in localStorage
+      const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+      const registeredUser = registeredUsers.find((u: any) => u.email === email);
+      
+      // Validate credentials - either mock user with default password or registered user with matching password
+      if ((mockUser && password === 'password') || (registeredUser && registeredUser.password === password)) {
+        const loggedInUser = mockUser || registeredUser;
         
-        // Generate and "send" verification code
-        const code = generateCode();
-        setVerificationCode(code);
-        
-        console.log(`Verification code for ${email}: ${code}`); // For demo only
+        // Set the user in state and localStorage
+        setUser(loggedInUser);
+        localStorage.setItem('eloiseUser', JSON.stringify(loggedInUser));
         
         toast({
-          title: "Verification required",
-          description: `Please enter the 6-digit code sent to ${email}`,
+          title: "Login successful",
+          description: `Welcome back, ${loggedInUser.name}!`,
         });
         
-        navigate('/verify-code');
+        // Redirect based on user role
+        redirectToDashboard(loggedInUser.role);
       } else {
         toast({
           variant: "destructive",
@@ -110,83 +92,38 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  const verifyLoginCode = async (code: string) => {
-    try {
-      setLoading(true);
-      
-      // In a real app, verify against an API
-      // For MVP, we'll just compare against the stored code
-      if (code === verificationCode && pendingUser) {
-        // Find the full user data
-        const fullUser = MOCK_USERS.find(u => u.id === pendingUser.id);
-        
-        if (fullUser) {
-          setUser(fullUser);
-          localStorage.setItem('eloiseUser', JSON.stringify(fullUser));
-          setPendingUser(null);
-          setVerificationCode(null);
-          
-          toast({
-            title: "Login successful",
-            description: `Welcome back, ${fullUser.name}!`,
-          });
-          
-          // Redirect based on user role
-          switch (fullUser.role) {
-            case 'superadmin':
-              navigate('/admin/dashboard');
-              break;
-            case 'firmadmin':
-              navigate('/firm/dashboard');
-              break;
-            case 'broker':
-              navigate('/broker/dashboard');
-              break;
-            default:
-              navigate('/');
-          }
-        }
-      } else {
-        throw new Error("Invalid or expired verification code");
-      }
-    } catch (error) {
-      console.error('Verification error:', error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const resendLoginCode = async () => {
-    try {
-      setLoading(true);
-      
-      if (!pendingUser) {
-        throw new Error("No pending verification");
-      }
-      
-      // Generate a new code
-      const newCode = generateCode();
-      setVerificationCode(newCode);
-      
-      console.log(`New verification code for ${pendingUser.email}: ${newCode}`); // For demo only
-      
-      // In a real app, send the code via email
-    } catch (error) {
-      console.error('Resend code error:', error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const signup = async (name: string, email: string, password: string, role: UserRole, firmId?: string) => {
     try {
       setLoading(true);
       
-      // In a real app, make API call to register user
-      // For MVP, we'll just simulate success after a delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Check if user already exists
+      const existingMockUser = MOCK_USERS.some(u => u.email === email);
+      const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+      const existingRegisteredUser = registeredUsers.some((u: any) => u.email === email);
+      
+      if (existingMockUser || existingRegisteredUser) {
+        toast({
+          variant: "destructive",
+          title: "Registration failed",
+          description: "User with this email already exists",
+        });
+        return;
+      }
+      
+      // Create new user
+      const newUser = {
+        id: `reg-${Date.now()}`,
+        name,
+        email,
+        role,
+        firmId,
+        firmName: firmId === '101' ? 'Finance Pro Inc.' : firmId === '102' ? 'Capital Solutions LLC' : undefined,
+        password, // Store password for demo purposes
+      };
+      
+      // Save to localStorage
+      registeredUsers.push(newUser);
+      localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
       
       toast({
         title: "Registration successful",
@@ -219,7 +156,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       // Always show success even if email doesn't exist (security best practice)
       console.log(`Password reset requested for ${email}, user exists: ${userExists}`);
       
-      // We would send an email in a real app
+      toast({
+        title: "Password reset link sent",
+        description: "If an account with this email exists, you will receive a password reset link.",
+      });
     } catch (error) {
       console.error('Password reset error:', error);
       throw error;
@@ -228,11 +168,25 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  const redirectToDashboard = (role: UserRole) => {
+    switch (role) {
+      case 'superadmin':
+        navigate('/admin/dashboard');
+        break;
+      case 'firmadmin':
+        navigate('/firm/dashboard');
+        break;
+      case 'broker':
+        navigate('/broker/dashboard');
+        break;
+      default:
+        navigate('/');
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem('eloiseUser');
     setUser(null);
-    setPendingUser(null);
-    setVerificationCode(null);
     navigate('/login');
     toast({
       title: "Logged out",
@@ -243,14 +197,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   return (
     <AuthContext.Provider value={{
       user,
-      pendingUser,
       loading,
       login,
       signup,
       logout,
       resetPassword,
-      verifyLoginCode,
-      resendLoginCode,
       isAuthenticated: !!user,
     }}>
       {children}

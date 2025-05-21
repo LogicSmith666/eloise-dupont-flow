@@ -21,7 +21,7 @@ const SUPPORTED_TYPES = [
 const UploadDocuments = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [businessName, setBusinessName] = useState("");
+  const [dealName, setDealName] = useState("");
   const [businessDescription, setBusinessDescription] = useState("");
   const [requestedAmount, setRequestedAmount] = useState("");
   const [files, setFiles] = useState<File[]>([]);
@@ -75,8 +75,8 @@ const UploadDocuments = () => {
     // Simulate upload process
     setTimeout(() => {
       toast({
-        title: "Upload successful!",
-        description: `${files.length} documents for ${businessName} have been uploaded and are being processed.`,
+        title: "Deal submitted successfully!",
+        description: `"${dealName}" has been submitted with ${files.length} documents and is being processed.`,
       });
       
       setUploading(false);
@@ -96,9 +96,9 @@ const UploadDocuments = () => {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Upload Documents</h1>
+            <h1 className="text-3xl font-bold tracking-tight">Create New Deal</h1>
             <p className="text-muted-foreground">
-              Upload business owner's financial documents for funding application.
+              Submit a new funding deal with business documentation.
             </p>
           </div>
         </div>
@@ -107,7 +107,7 @@ const UploadDocuments = () => {
           <div className="grid gap-6">
             <Card>
               <CardHeader>
-                <CardTitle>Business Information</CardTitle>
+                <CardTitle>Deal Information</CardTitle>
                 <CardDescription>
                   Provide details about the business applying for funding.
                 </CardDescription>
@@ -115,11 +115,12 @@ const UploadDocuments = () => {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="businessName">Business Name</Label>
+                    <Label htmlFor="dealName">Deal Name</Label>
                     <Input 
-                      id="businessName" 
-                      value={businessName}
-                      onChange={(e) => setBusinessName(e.target.value)}
+                      id="dealName" 
+                      placeholder="Enter a descriptive name for this deal"
+                      value={dealName}
+                      onChange={(e) => setDealName(e.target.value)}
                       required
                     />
                   </div>
@@ -127,6 +128,7 @@ const UploadDocuments = () => {
                     <Label htmlFor="requestedAmount">Requested Amount ($)</Label>
                     <Input 
                       id="requestedAmount" 
+                      placeholder="25000"
                       value={requestedAmount}
                       onChange={(e) => setRequestedAmount(e.target.value.replace(/[^0-9]/g, ''))}
                       required
@@ -137,6 +139,7 @@ const UploadDocuments = () => {
                   <Label htmlFor="businessDescription">Business Description</Label>
                   <Textarea 
                     id="businessDescription" 
+                    placeholder="Provide details about the business and funding purpose"
                     value={businessDescription}
                     onChange={(e) => setBusinessDescription(e.target.value)}
                     rows={3}
@@ -147,7 +150,7 @@ const UploadDocuments = () => {
             
             <Card>
               <CardHeader>
-                <CardTitle>Financial Documents</CardTitle>
+                <CardTitle>Deal Documents</CardTitle>
                 <CardDescription>
                   Upload PDFs or images of business financial statements, bank statements, and other relevant documents.
                 </CardDescription>
@@ -218,14 +221,14 @@ const UploadDocuments = () => {
             
             <Card>
               <CardHeader>
-                <CardTitle>Submit Application</CardTitle>
+                <CardTitle>Submit Deal</CardTitle>
                 <CardDescription>
-                  Submit the application for processing. Our system will extract key information from the documents.
+                  Submit the deal for processing. Our team will review the documents and provide funding approval.
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  By submitting this application, you confirm that you have the business owner's consent to
+                  By submitting this deal, you confirm that you have the business owner's consent to
                   share these financial documents for the purpose of obtaining funding.
                 </p>
               </CardContent>
@@ -239,9 +242,9 @@ const UploadDocuments = () => {
                 </Button>
                 <Button 
                   type="submit"
-                  disabled={uploading || files.length === 0 || !businessName || !requestedAmount}
+                  disabled={uploading || files.length === 0 || !dealName || !requestedAmount}
                 >
-                  {uploading ? "Uploading..." : "Submit Application"}
+                  {uploading ? "Submitting..." : "Submit Deal"}
                 </Button>
               </CardFooter>
             </Card>
