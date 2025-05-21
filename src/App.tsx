@@ -14,7 +14,6 @@ import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
-import VerifyCode from "./pages/VerifyCode";
 import NotFound from "./pages/NotFound";
 
 // Super Admin Pages
@@ -43,7 +42,6 @@ const queryClient = new QueryClient({
 
 const App = () => {
   return (
-    // Fix: Properly wrap the application with QueryClientProvider
     <BrowserRouter>
       <ThemeProvider>
         <QueryClientProvider client={queryClient}>
@@ -58,7 +56,6 @@ const App = () => {
                   <Route path="/login" element={<Login />} />
                   <Route path="/signup" element={<Signup />} />
                   <Route path="/forgot-password" element={<ForgotPassword />} />
-                  <Route path="/verify-code" element={<VerifyCode />} />
 
                   {/* Super Admin Routes */}
                   <Route 
