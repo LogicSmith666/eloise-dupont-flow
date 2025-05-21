@@ -204,19 +204,19 @@ const BrokerDashboard = () => {
               </TabsList>
               
               <TabsContent value="all">
-                <dealListTable deals={filteredApplications} navigate={navigate} />
+                <DealListTable deals={filteredApplications} navigate={navigate} />
               </TabsContent>
               
               <TabsContent value="approved">
-                <dealListTable deals={filteredApplications.filter(deal => deal.status === 'Approved')} navigate={navigate} />
+                <DealListTable deals={filteredApplications.filter(deal => deal.status === 'Approved')} navigate={navigate} />
               </TabsContent>
               
               <TabsContent value="processing">
-                <dealListTable deals={filteredApplications.filter(deal => deal.status === 'Processing')} navigate={navigate} />
+                <DealListTable deals={filteredApplications.filter(deal => deal.status === 'Processing')} navigate={navigate} />
               </TabsContent>
               
               <TabsContent value="rejected">
-                <dealListTable deals={filteredApplications.filter(deal => deal.status === 'Rejected')} navigate={navigate} />
+                <DealListTable deals={filteredApplications.filter(deal => deal.status === 'Rejected')} navigate={navigate} />
               </TabsContent>
             </Tabs>
           </CardContent>
@@ -226,8 +226,8 @@ const BrokerDashboard = () => {
   );
 };
 
-// Deal list table component
-const dealListTable = ({ deals, navigate }: { deals: typeof MOCK_APPLICATIONS, navigate: (path: string) => void }) => {
+// Deal list table component - Changed to PascalCase to follow React component naming convention
+const DealListTable = ({ deals, navigate }: { deals: typeof MOCK_APPLICATIONS, navigate: (path: string) => void }) => {
   return (
     <div className="rounded-md border">
       <div className="grid grid-cols-5 p-4 font-medium">
