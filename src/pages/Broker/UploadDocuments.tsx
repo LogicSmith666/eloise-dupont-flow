@@ -7,8 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
-import { ArrowLeft, FileText, Upload, X } from "lucide-react";
+import { ArrowLeft, FileText, Upload, X, Building } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // Define supported file types
 const SUPPORTED_TYPES = [
@@ -18,12 +19,20 @@ const SUPPORTED_TYPES = [
   "image/jpg",
 ];
 
+// Mock business profiles
+const MOCK_BUSINESS_PROFILES = [
+  { id: 'bp1', businessName: 'Cozy Coffee Shop' },
+  { id: 'bp2', businessName: 'Urban Fitness Center' },
+  { id: 'bp3', businessName: 'Fresh Grocery Market' }
+];
+
 const UploadDocuments = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [selectedBusinessProfile, setSelectedBusinessProfile] = useState("");
   const [dealName, setDealName] = useState("");
-  const [businessDescription, setBusinessDescription] = useState("");
   const [requestedAmount, setRequestedAmount] = useState("");
+  const [dealDescription, setDealDescription] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   
@@ -61,6 +70,15 @@ const UploadDocuments = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!selectedBusinessProfile) {
+      toast({
+        variant: "destructive",
+        title: "No business profile selected",
+        description: "Please select a business profile to continue.",
+      });
+      return;
+    }
+    
     if (files.length === 0) {
       toast({
         variant: "destructive",
@@ -74,9 +92,10 @@ const UploadDocuments = () => {
     
     // Simulate upload process
     setTimeout(() => {
+      const selectedBusiness = MOCK_BUSINESS_PROFILES.find(bp => bp.id === selectedBusinessProfile);
       toast({
         title: "Deal submitted successfully!",
-        description: `"${dealName}" has been submitted with ${files.length} documents and is being processed.`,
+        description: `"${dealName}" for ${selectedBusiness?.businessName} has been submitted with ${files.length} documents and is being processed.`,
       });
       
       setUploading(false);
@@ -107,15 +126,47 @@ const UploadDocuments = () => {
           <div className="grid gap-6">
             <Card>
               <CardHeader>
+                <CardTitle>Select Business Profile</CardTitle>
+                <CardDescription>
+                  Choose the business owner profile for this deal submission.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="businessProfile">Business Profile *</Label>
+                  <Select value={selectedBusinessProfile} onValueChange={setSelectedBusinessProfile} required>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a business profile" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {MOCK_BUSINESS_PROFILES.map((profile) => (
+                        <SelectItem key={profile.id} value={profile.id}>
+                          <div className="flex items-center">
+                            <Building className="mr-2 h-4 w-4" />
+                            {profile.businessName}
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">
+                    Don't see the business? <Button variant="link" className="p-0 h-auto text-xs" onClick={() => navigate('/broker/business-profiles')}>Add a new business profile</Button>
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
                 <CardTitle>Deal Information</CardTitle>
                 <CardDescription>
-                  Provide details about the business applying for funding.
+                  Provide details about the funding request.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="dealName">Deal Name</Label>
+                    <Label htmlFor="dealName">Deal Name *</Label>
                     <Input 
                       id="dealName" 
                       placeholder="Enter a descriptive name for this deal"
@@ -131,17 +182,16 @@ const UploadDocuments = () => {
                       placeholder="25000"
                       value={requestedAmount}
                       onChange={(e) => setRequestedAmount(e.target.value.replace(/[^0-9]/g, ''))}
-                      required
                     />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="businessDescription">Business Description</Label>
+                  <Label htmlFor="dealDescription">Deal Description</Label>
                   <Textarea 
-                    id="businessDescription" 
-                    placeholder="Provide details about the business and funding purpose"
-                    value={businessDescription}
-                    onChange={(e) => setBusinessDescription(e.target.value)}
+                    id="dealDescription" 
+                    placeholder="Provide details about the funding purpose and business needs"
+                    value={dealDescription}
+                    onChange={(e) => setDealDescription(e.target.value)}
                     rows={3}
                   />
                 </div>
@@ -242,7 +292,7 @@ const UploadDocuments = () => {
                 </Button>
                 <Button 
                   type="submit"
-                  disabled={uploading || files.length === 0 || !dealName || !requestedAmount}
+                  disabled={uploading || files.length === 0 || !dealName || !selectedBusinessProfile}
                 >
                   {uploading ? "Submitting..." : "Submit Deal"}
                 </Button>

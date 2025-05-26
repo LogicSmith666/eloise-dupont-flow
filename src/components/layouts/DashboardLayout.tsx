@@ -1,9 +1,8 @@
-
 import { ReactNode } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from "@/components/ui/sidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { LogOut, User, Users, Settings, Layout, FileText, Upload, Moon, Sun } from 'lucide-react';
+import { LogOut, User, Users, Settings, Layout, FileText, Upload, Moon, Sun, Building } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -36,6 +35,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       case 'broker':
         return [
           { label: 'Dashboard', icon: Layout, path: '/broker/dashboard' },
+          { label: 'Business Profiles', icon: Building, path: '/broker/business-profiles' },
           { label: 'Upload Documents', icon: Upload, path: '/broker/upload' },
           { label: 'Applications', icon: FileText, path: '/broker/applications' },
           { label: 'Settings', icon: Settings, path: '/broker/settings' },

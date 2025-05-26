@@ -27,6 +27,7 @@ import BrokerManagement from "./pages/FirmAdmin/BrokerManagement";
 
 // Broker Pages
 import BrokerDashboard from "./pages/Broker/Dashboard";
+import BusinessProfiles from "./pages/Broker/BusinessProfiles";
 import UploadDocuments from "./pages/Broker/UploadDocuments";
 import BusinessOwnerDetails from "./pages/Broker/BusinessOwnerDetails";
 
@@ -107,6 +108,14 @@ const App = () => {
                     element={
                       <ProtectedRoute allowedRoles={["broker"]}>
                         <BrokerDashboard />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/broker/business-profiles" 
+                    element={
+                      <ProtectedRoute allowedRoles={["broker"]}>
+                        <BusinessProfiles />
                       </ProtectedRoute>
                     } 
                   />
