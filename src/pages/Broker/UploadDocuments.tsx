@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
-import { ArrowLeft, FileText, Upload, X, Building } from "lucide-react";
+import { ArrowLeft, FileText, Upload, X, Building, Edit } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -19,12 +19,26 @@ const SUPPORTED_TYPES = [
   "image/jpg",
 ];
 
+// Define document types
+const DOCUMENT_TYPES = [
+  { value: "passport", label: "Passport" },
+  { value: "idcard", label: "ID Card" },
+  { value: "bank_statement", label: "Bank Statement" },
+  { value: "tax_return", label: "Tax Return" },
+];
+
 // Mock business profiles
 const MOCK_BUSINESS_PROFILES = [
   { id: 'bp1', businessName: 'Cozy Coffee Shop' },
   { id: 'bp2', businessName: 'Urban Fitness Center' },
   { id: 'bp3', businessName: 'Fresh Grocery Market' }
 ];
+
+interface FileWithType {
+  file: File;
+  type: string;
+  id: string;
+}
 
 const UploadDocuments = () => {
   const navigate = useNavigate();
@@ -33,21 +47,25 @@ const UploadDocuments = () => {
   const [dealName, setDealName] = useState("");
   const [requestedAmount, setRequestedAmount] = useState("");
   const [dealDescription, setDealDescription] = useState("");
-  const [files, setFiles] = useState<File[]>([]);
+  const [files, setFiles] = useState<FileWithType[]>([]);
   const [uploading, setUploading] = useState(false);
   
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files;
     if (!selectedFiles) return;
     
-    const newFiles: File[] = [];
+    const newFiles: FileWithType[] = [];
     
     for (let i = 0; i < selectedFiles.length; i++) {
       const file = selectedFiles[i];
       
       // Check if file type is supported
       if (SUPPORTED_TYPES.includes(file.type)) {
-        newFiles.push(file);
+        newFiles.push({
+          file,
+          type: "", // Default empty type, user needs to select
+          id: Math.random().toString(36).substr(2, 9)
+        });
       } else {
         toast({
           variant: "destructive",
@@ -63,8 +81,34 @@ const UploadDocuments = () => {
     e.target.value = "";
   };
   
-  const removeFile = (index: number) => {
-    setFiles(prev => prev.filter((_, i) => i !== index));
+  const removeFile = (id: string) => {
+    setFiles(prev => prev.filter(f => f.id !== id));
+  };
+
+  const updateFileType = (id: string, type: string) => {
+    setFiles(prev => prev.map(f => f.id === id ? { ...f, type } : f));
+  };
+
+  const replaceFile = (id: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    const newFile = e.target.files?.[0];
+    if (!newFile) return;
+
+    if (SUPPORTED_TYPES.includes(newFile.type)) {
+      setFiles(prev => prev.map(f => f.id === id ? { ...f, file: newFile } : f));
+      toast({
+        title: "File updated",
+        description: "The file has been successfully replaced.",
+      });
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Unsupported file type",
+        description: "Please upload PDF or image files only.",
+      });
+    }
+
+    // Reset input value
+    e.target.value = "";
   };
   
   const handleSubmit = (e: React.FormEvent) => {
@@ -84,6 +128,17 @@ const UploadDocuments = () => {
         variant: "destructive",
         title: "No files selected",
         description: "Please upload at least one document to continue.",
+      });
+      return;
+    }
+
+    // Check if all files have types selected
+    const filesWithoutType = files.filter(f => !f.type);
+    if (filesWithoutType.length > 0) {
+      toast({
+        variant: "destructive",
+        title: "Document types missing",
+        description: "Please select a document type for all uploaded files.",
       });
       return;
     }
@@ -202,7 +257,7 @@ const UploadDocuments = () => {
               <CardHeader>
                 <CardTitle>Deal Documents</CardTitle>
                 <CardDescription>
-                  Upload PDFs or images of business financial statements, bank statements, and other relevant documents.
+                  Upload documents and categorize them by type. Each document must have a type selected.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -210,7 +265,7 @@ const UploadDocuments = () => {
                   <div className="text-center space-y-4">
                     <div className="flex flex-col items-center justify-center">
                       <Upload className="h-10 w-10 text-muted-foreground" />
-                      <p className="mt-2 text-lg font-semibold">Drop files here or click to upload</p>
+                      <p className="mt-2 text-lg font-semibold">Upload Documents</p>
                       <p className="text-sm text-muted-foreground">
                         Support for PDF, JPEG, PNG up to 10MB each
                       </p>
@@ -238,29 +293,61 @@ const UploadDocuments = () => {
                     <div className="p-3 border-b bg-muted/50">
                       <p className="font-medium text-sm">Uploaded Files ({files.length})</p>
                     </div>
-                    <div className="p-3 space-y-2 max-h-[300px] overflow-y-auto">
-                      {files.map((file, index) => (
+                    <div className="p-3 space-y-3 max-h-[400px] overflow-y-auto">
+                      {files.map((fileItem) => (
                         <div 
-                          key={`${file.name}-${index}`} 
-                          className="flex items-center justify-between p-2 border rounded-md"
+                          key={fileItem.id}
+                          className="flex items-center justify-between p-3 border rounded-md bg-background"
                         >
-                          <div className="flex items-center space-x-3">
+                          <div className="flex items-center space-x-3 flex-1">
                             <FileText className="h-5 w-5 text-muted-foreground" />
-                            <div className="text-sm">
-                              <p className="font-medium truncate max-w-[300px]">{file.name}</p>
+                            <div className="text-sm flex-1">
+                              <p className="font-medium truncate max-w-[200px]">{fileItem.file.name}</p>
                               <p className="text-xs text-muted-foreground">
-                                {(file.size / 1024 / 1024).toFixed(2)} MB
+                                {(fileItem.file.size / 1024 / 1024).toFixed(2)} MB
                               </p>
                             </div>
+                            <div className="flex items-center space-x-2">
+                              <Select 
+                                value={fileItem.type} 
+                                onValueChange={(value) => updateFileType(fileItem.id, value)}
+                              >
+                                <SelectTrigger className="w-[150px]">
+                                  <SelectValue placeholder="Select type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {DOCUMENT_TYPES.map((type) => (
+                                    <SelectItem key={type.value} value={type.value}>
+                                      {type.label}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <input
+                                type="file"
+                                id={`replace-${fileItem.id}`}
+                                className="hidden"
+                                accept={SUPPORTED_TYPES.join(",")}
+                                onChange={(e) => replaceFile(fileItem.id, e)}
+                              />
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => document.getElementById(`replace-${fileItem.id}`)?.click()}
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                type="button"
+                                variant="ghost" 
+                                size="sm"
+                                onClick={() => removeFile(fileItem.id)}
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </div>
-                          <Button 
-                            type="button"
-                            variant="ghost" 
-                            size="icon"
-                            onClick={() => removeFile(index)}
-                          >
-                            <X className="h-4 w-4" />
-                          </Button>
                         </div>
                       ))}
                     </div>
@@ -292,7 +379,7 @@ const UploadDocuments = () => {
                 </Button>
                 <Button 
                   type="submit"
-                  disabled={uploading || files.length === 0 || !dealName || !selectedBusinessProfile}
+                  disabled={uploading || files.length === 0 || !dealName || !selectedBusinessProfile || files.some(f => !f.type)}
                 >
                   {uploading ? "Submitting..." : "Submit Deal"}
                 </Button>
