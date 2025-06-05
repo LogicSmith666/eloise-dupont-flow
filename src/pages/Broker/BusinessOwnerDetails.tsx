@@ -4,10 +4,11 @@ import { useParams, useNavigate } from "react-router-dom";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Download, Eye, Upload, FileText } from "lucide-react";
+import { ArrowLeft, Download, Eye, Upload, FileText, Plus } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 // Document types mapping
 const DOCUMENT_TYPES = {
@@ -62,6 +63,14 @@ const BusinessOwnerDetails = () => {
   const [uploadedFiles, setUploadedFiles] = useState(MOCK_UPLOADED_FILES);
   const [isLoading, setIsLoading] = useState(false);
   
+  // Modal states
+  const [showTypeChangeModal, setShowTypeChangeModal] = useState(false);
+  const [pendingTypeChange, setPendingTypeChange] = useState<{
+    fileId: string;
+    newType: string;
+    fileName: string;
+  } | null>(null);
+  
   // Business/Deal info (minimal)
   const [businessName] = useState("Cozy Coffee Shop");
   const [dealName] = useState("Q1 Capital Request");
@@ -113,16 +122,66 @@ const BusinessOwnerDetails = () => {
     event.target.value = "";
   };
 
-  // Handle file type change
-  const handleTypeChange = (fileId: string, newType: string) => {
+  // Handle new file upload
+  const handleNewFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newFile = event.target.files?.[0];
+    if (!newFile) return;
+
+    // Create new file entry
+    const newFileEntry = {
+      id: `f${Date.now()}`,
+      fileName: newFile.name,
+      type: "passport", // Default type
+      fileSize: newFile.size / 1024 / 1024,
+      uploadedAt: new Date().toISOString().split('T')[0],
+      fileUrl: "#"
+    };
+
+    setUploadedFiles(prev => [...prev, newFileEntry]);
+
+    toast({
+      title: "File uploaded",
+      description: `${newFile.name} has been uploaded successfully.`,
+    });
+
+    // Reset input
+    event.target.value = "";
+  };
+
+  // Handle file type change with confirmation
+  const handleTypeChangeRequest = (fileId: string, newType: string) => {
+    const file = uploadedFiles.find(f => f.id === fileId);
+    if (!file || file.type === newType) return;
+
+    setPendingTypeChange({
+      fileId,
+      newType,
+      fileName: file.fileName
+    });
+    setShowTypeChangeModal(true);
+  };
+
+  // Confirm type change
+  const handleConfirmTypeChange = () => {
+    if (!pendingTypeChange) return;
+
     setUploadedFiles(prev => prev.map(f => 
-      f.id === fileId ? { ...f, type: newType } : f
+      f.id === pendingTypeChange.fileId ? { ...f, type: pendingTypeChange.newType } : f
     ));
 
     toast({
       title: "Document type updated", 
       description: "The document type has been changed successfully.",
     });
+
+    setShowTypeChangeModal(false);
+    setPendingTypeChange(null);
+  };
+
+  // Cancel type change
+  const handleCancelTypeChange = () => {
+    setShowTypeChangeModal(false);
+    setPendingTypeChange(null);
   };
   
   return (
@@ -169,13 +228,33 @@ const BusinessOwnerDetails = () => {
         
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg md:text-xl">Uploaded Documents</CardTitle>
-            <CardDescription className="text-sm">
-              View, download, or update the documents submitted for this deal
-            </CardDescription>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <CardTitle className="text-lg md:text-xl">Uploaded Documents</CardTitle>
+                <CardDescription className="text-sm">
+                  View, download, or update the documents submitted for this deal
+                </CardDescription>
+              </div>
+              <div>
+                <input
+                  type="file"
+                  id="add-new-file"
+                  className="hidden"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  onChange={handleNewFileUpload}
+                />
+                <Button
+                  onClick={() => document.getElementById('add-new-file')?.click()}
+                  className="w-full sm:w-auto"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add New File
+                </Button>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
-            {/* Desktop view - improved responsive layout */}
+            {/* Desktop view */}
             <div className="hidden lg:block">
               <div className="overflow-x-auto">
                 <Table>
@@ -200,7 +279,7 @@ const BusinessOwnerDetails = () => {
                         <TableCell>
                           <Select 
                             value={file.type} 
-                            onValueChange={(value) => handleTypeChange(file.id, value)}
+                            onValueChange={(value) => handleTypeChangeRequest(file.id, value)}
                           >
                             <SelectTrigger className="w-[130px]">
                               <SelectValue />
@@ -312,7 +391,7 @@ const BusinessOwnerDetails = () => {
                       <label className="text-xs font-medium text-muted-foreground mb-2 block">Document Type</label>
                       <Select 
                         value={file.type} 
-                        onValueChange={(value) => handleTypeChange(file.id, value)}
+                        onValueChange={(value) => handleTypeChangeRequest(file.id, value)}
                       >
                         <SelectTrigger className="w-full">
                           <SelectValue />
@@ -351,7 +430,7 @@ const BusinessOwnerDetails = () => {
                         <label className="text-xs font-medium text-muted-foreground mb-2 block">Document Type</label>
                         <Select 
                           value={file.type} 
-                          onValueChange={(value) => handleTypeChange(file.id, value)}
+                          onValueChange={(value) => handleTypeChangeRequest(file.id, value)}
                         >
                           <SelectTrigger className="w-full">
                             <SelectValue />
@@ -406,6 +485,27 @@ const BusinessOwnerDetails = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Type Change Confirmation Modal */}
+        <Dialog open={showTypeChangeModal} onOpenChange={setShowTypeChangeModal}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Confirm Document Type Change</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to change the document type for "{pendingTypeChange?.fileName}" to{" "}
+                {pendingTypeChange ? DOCUMENT_TYPES[pendingTypeChange.newType as keyof typeof DOCUMENT_TYPES] : ""}?
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="outline" onClick={handleCancelTypeChange}>
+                Cancel
+              </Button>
+              <Button onClick={handleConfirmTypeChange}>
+                Confirm Change
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </DashboardLayout>
   );
