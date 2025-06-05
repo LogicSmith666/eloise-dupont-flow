@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
-import { FileText, Upload, User } from "lucide-react";
+import { FileText, Upload, User, Shield, Mail } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import InviteModal from "@/components/invites/InviteModal";
 import { useInvite } from "@/contexts/InviteContext";
@@ -35,14 +35,24 @@ const FirmAdminDashboard = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Firm Admin Dashboard</h1>
-            <p className="text-muted-foreground">
-              {user?.firmName || "Your Firm"} - Manage brokers and monitor applications.
+        <div className="flex flex-col space-y-4 md:flex-row md:items-start md:justify-between md:space-y-0">
+          <div className="space-y-2">
+            <div className="flex items-center space-x-3">
+              <div className="h-10 w-10 rounded-full bg-eloise-accent/10 flex items-center justify-center">
+                <Shield className="h-5 w-5 text-eloise-accent" />
+              </div>
+              <div>
+                <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Admin Dashboard</h1>
+                <p className="text-sm text-muted-foreground">
+                  {user?.name} • {user?.firmName || "Your Firm"}
+                </p>
+              </div>
+            </div>
+            <p className="text-sm text-muted-foreground max-w-2xl">
+              Manage brokers and monitor applications.
             </p>
           </div>
-          <div className="flex space-x-4">
+          <div className="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2 w-full md:w-auto">
             <InviteModal
               title="Invite Broker"
               description="Send an invitation to a broker to join your firm."
@@ -53,19 +63,20 @@ const FirmAdminDashboard = () => {
             <Button 
               variant="outline"
               onClick={() => navigate('/firm/brokers')}
+              className="w-full md:w-auto"
             >
               Manage Brokers
             </Button>
           </div>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:gap-6 grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium">Total Brokers</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">{MOCK_BROKERS.length}</div>
+              <div className="text-2xl md:text-3xl font-bold">{MOCK_BROKERS.length}</div>
             </CardContent>
           </Card>
           
@@ -74,7 +85,7 @@ const FirmAdminDashboard = () => {
               <CardTitle className="text-sm font-medium">Active Applications</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">{MOCK_APPLICATIONS.length}</div>
+              <div className="text-2xl md:text-3xl font-bold">{MOCK_APPLICATIONS.length}</div>
               <p className="text-xs text-muted-foreground mt-1">
                 +3 from last week
               </p>
@@ -86,7 +97,7 @@ const FirmAdminDashboard = () => {
               <CardTitle className="text-sm font-medium">Approved Rate</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">
+              <div className="text-2xl md:text-3xl font-bold">
                 {Math.round(MOCK_APPLICATIONS.filter(a => a.status === 'Approved').length / MOCK_APPLICATIONS.length * 100)}%
               </div>
               <p className="text-xs text-muted-foreground mt-1">
@@ -100,7 +111,7 @@ const FirmAdminDashboard = () => {
               <CardTitle className="text-sm font-medium">Pending Invites</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">{pendingInvites.length}</div>
+              <div className="text-2xl md:text-3xl font-bold">{pendingInvites.length}</div>
               <Button 
                 variant="link" 
                 className="p-0 h-auto text-xs text-muted-foreground"
@@ -112,12 +123,12 @@ const FirmAdminDashboard = () => {
           </Card>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
-          <Card className="col-span-1">
+        <div className="grid gap-6 lg:grid-cols-2">
+          <Card>
             <CardHeader>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col space-y-3 md:flex-row md:items-center md:justify-between md:space-y-0">
                 <div>
-                  <CardTitle>Brokers</CardTitle>
+                  <CardTitle className="text-lg">Brokers</CardTitle>
                   <CardDescription>Manage your team of brokers.</CardDescription>
                 </div>
                 <InviteModal
@@ -130,55 +141,60 @@ const FirmAdminDashboard = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {MOCK_BROKERS.map(broker => (
-                  <div key={broker.id} className="flex items-center justify-between p-3 border rounded-md hover:bg-muted">
-                    <div className="flex items-center space-x-3">
-                      <Avatar className="h-9 w-9">
+                  <div key={broker.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted transition-colors">
+                    <div className="flex items-center space-x-3 min-w-0 flex-1">
+                      <Avatar className="h-9 w-9 shrink-0">
                         <AvatarFallback>{broker.name.charAt(0)}</AvatarFallback>
                       </Avatar>
-                      <div>
-                        <div className="font-medium text-sm">{broker.name}</div>
-                        <div className="text-xs text-muted-foreground">{broker.email}</div>
+                      <div className="min-w-0 flex-1">
+                        <div className="font-medium text-sm truncate">{broker.name}</div>
+                        <div className="flex items-center space-x-1 text-xs text-muted-foreground mt-1">
+                          <Mail className="h-3 w-3" />
+                          <span className="truncate">{broker.email}</span>
+                        </div>
                       </div>
                     </div>
-                    <div className="text-sm">{broker.applications} applications</div>
+                    <div className="text-sm font-medium text-right shrink-0">
+                      {broker.applications} apps
+                    </div>
                   </div>
                 ))}
               </div>
             </CardContent>
           </Card>
           
-          <Card className="col-span-1">
+          <Card>
             <CardHeader>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col space-y-3 md:flex-row md:items-center md:justify-between md:space-y-0">
                 <div>
-                  <CardTitle>Recent Applications</CardTitle>
+                  <CardTitle className="text-lg">Recent Applications</CardTitle>
                   <CardDescription>Latest funding applications submitted.</CardDescription>
                 </div>
-                <Button size="sm" className="flex items-center gap-1">
+                <Button size="sm" className="flex items-center gap-1 w-full md:w-auto">
                   <FileText className="h-4 w-4" />
                   View All
                 </Button>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {MOCK_APPLICATIONS.slice(0, 4).map(app => (
-                  <div key={app.id} className="flex items-center justify-between p-3 border rounded-md hover:bg-muted">
-                    <div>
-                      <div className="font-medium text-sm">{app.businessName}</div>
-                      <div className="text-xs text-muted-foreground">
+                  <div key={app.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted transition-colors">
+                    <div className="min-w-0 flex-1">
+                      <div className="font-medium text-sm truncate">{app.businessName}</div>
+                      <div className="text-xs text-muted-foreground mt-1">
                         {app.amount} • {app.broker}
                       </div>
                     </div>
-                    <div>
-                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium 
+                    <div className="shrink-0 ml-2">
+                      <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium 
                         ${app.status === 'Approved' 
-                          ? 'bg-green-100 text-green-800' 
+                          ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' 
                           : app.status === 'Rejected' 
-                            ? 'bg-red-100 text-red-800' 
-                            : 'bg-yellow-100 text-yellow-800'
+                            ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' 
+                            : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
                         }`}
                       >
                         {app.status}
@@ -193,7 +209,7 @@ const FirmAdminDashboard = () => {
         
         <Card>
           <CardHeader>
-            <CardTitle>Performance Overview</CardTitle>
+            <CardTitle className="text-lg">Performance Overview</CardTitle>
             <CardDescription>Firm application processing statistics for the last 30 days.</CardDescription>
           </CardHeader>
           <CardContent className="h-80 flex items-center justify-center">

@@ -4,7 +4,7 @@ import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
-import { Upload, ArrowRight, Calendar, Search } from "lucide-react";
+import { Upload, ArrowRight, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
@@ -87,37 +87,10 @@ const BrokerDashboard = () => {
     <DashboardLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Broker Dashboard</h1>
-          <p className="text-muted-foreground text-sm md:text-base">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-muted-foreground text-sm md:text-base mt-1">
             {user?.firmName || "Your Firm"} - Upload and manage business owner applications.
           </p>
-        </div>
-        
-        <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
-          <div className="flex flex-col space-y-2 md:flex-row md:items-center md:space-y-0 md:gap-2">
-            <p className="font-medium text-sm md:text-base">Time Period:</p>
-            <Select value={timePeriod} onValueChange={(value: keyof typeof TIME_PERIODS) => setTimePeriod(value)}>
-              <SelectTrigger className="w-full md:w-[180px]">
-                <SelectValue placeholder="Select time period" />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.entries(TIME_PERIODS).map(([key, { label }]) => (
-                  <SelectItem key={key} value={key}>{label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <div className="relative w-full md:w-auto">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder="Search deals..."
-              className="pl-8 h-9 w-full md:w-[200px] rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
         </div>
 
         <div className="grid gap-4 md:gap-6 grid-cols-2 lg:grid-cols-4">
@@ -191,16 +164,47 @@ const BrokerDashboard = () => {
         
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg md:text-xl">Deal History</CardTitle>
-            <CardDescription className="text-sm">Manage your deals and track their status.</CardDescription>
+            <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
+              <div>
+                <CardTitle className="text-lg md:text-xl">Deal History</CardTitle>
+                <CardDescription className="text-sm">Manage your deals and track their status.</CardDescription>
+              </div>
+              
+              <div className="flex flex-col space-y-2 md:flex-row md:items-center md:space-y-0 md:space-x-4">
+                <div className="flex flex-col space-y-2 md:flex-row md:items-center md:space-y-0 md:space-x-2">
+                  <label className="text-sm font-medium">Time Period:</label>
+                  <Select value={timePeriod} onValueChange={(value: keyof typeof TIME_PERIODS) => setTimePeriod(value)}>
+                    <SelectTrigger className="w-full md:w-[180px]">
+                      <SelectValue placeholder="Select time period" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(TIME_PERIODS).map(([key, { label }]) => (
+                        <SelectItem key={key} value={key}>{label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="relative">
+                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <input
+                    type="text"
+                    placeholder="Search deals..."
+                    className="pl-8 h-9 w-full md:w-[200px] rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="all" className="w-full">
-              <TabsList className="mb-4 grid w-full grid-cols-2 md:grid-cols-4">
-                <TabsTrigger value="all" className="text-xs md:text-sm">All</TabsTrigger>
-                <TabsTrigger value="approved" className="text-xs md:text-sm">Approved</TabsTrigger>
-                <TabsTrigger value="processing" className="text-xs md:text-sm">Processing</TabsTrigger>
-                <TabsTrigger value="rejected" className="text-xs md:text-sm">Rejected</TabsTrigger>
+              <TabsList className="mb-4 grid w-full grid-cols-4 h-auto">
+                <TabsTrigger value="all" className="text-xs md:text-sm py-2 px-2">All</TabsTrigger>
+                <TabsTrigger value="approved" className="text-xs md:text-sm py-2 px-2">Approved</TabsTrigger>
+                <TabsTrigger value="processing" className="text-xs md:text-sm py-2 px-2">Processing</TabsTrigger>
+                <TabsTrigger value="rejected" className="text-xs md:text-sm py-2 px-2">Rejected</TabsTrigger>
               </TabsList>
               
               <TabsContent value="all">

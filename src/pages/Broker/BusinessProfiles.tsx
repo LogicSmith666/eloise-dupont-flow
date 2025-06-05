@@ -4,7 +4,7 @@ import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Building, Plus, Edit, Trash2, Eye } from "lucide-react";
+import { Building, Plus, Edit, Trash2, Eye, Mail, Phone, Calendar } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -110,19 +110,19 @@ const BusinessProfiles = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Business Profiles</h1>
-            <p className="text-muted-foreground">
+        <div className="flex flex-col space-y-4 md:flex-row md:items-start md:justify-between md:space-y-0">
+          <div className="space-y-1">
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Business Profiles</h1>
+            <p className="text-sm text-muted-foreground max-w-2xl">
               Manage business owner profiles for deal submissions.
             </p>
           </div>
           
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button onClick={handleCreateProfile}>
+              <Button onClick={handleCreateProfile} className="w-full md:w-auto shrink-0">
                 <Plus className="mr-2 h-4 w-4" />
-                Add Business Profile
+                Add Profile
               </Button>
             </DialogTrigger>
             <DialogContent>
@@ -182,48 +182,65 @@ const BusinessProfiles = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Business Profiles ({businessProfiles.length})</CardTitle>
+            <CardTitle className="text-lg">Business Profiles ({businessProfiles.length})</CardTitle>
             <CardDescription>
               All business owner profiles managed by your account.
             </CardDescription>
           </CardHeader>
           <CardContent>
             {businessProfiles.length > 0 ? (
-              <div className="space-y-4">
+              <div className="grid gap-4 md:gap-6">
                 {businessProfiles.map((profile) => (
-                  <div key={profile.id} className="border rounded-lg p-4 flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <div className="h-10 w-10 rounded-full bg-eloise-accent/10 flex items-center justify-center">
-                        <Building className="h-5 w-5 text-eloise-accent" />
-                      </div>
-                      <div>
-                        <h3 className="font-medium">{profile.businessName}</h3>
-                        <div className="text-sm text-muted-foreground space-y-1">
-                          {profile.email && <p>Email: {profile.email}</p>}
-                          {profile.phone && <p>Phone: {profile.phone}</p>}
-                          <p>Created: {profile.createdAt}</p>
+                  <Card key={profile.id} className="border border-border/40 hover:border-border transition-colors">
+                    <CardContent className="p-4 md:p-6">
+                      <div className="flex flex-col space-y-4 md:flex-row md:items-start md:justify-between md:space-y-0">
+                        <div className="flex items-start space-x-3 min-w-0 flex-1">
+                          <div className="h-10 w-10 rounded-full bg-eloise-accent/10 flex items-center justify-center shrink-0">
+                            <Building className="h-5 w-5 text-eloise-accent" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <h3 className="font-semibold text-base mb-3 truncate">{profile.businessName}</h3>
+                            <div className="space-y-2">
+                              {profile.email && (
+                                <div className="flex items-center space-x-2 text-sm">
+                                  <Mail className="h-4 w-4 text-muted-foreground shrink-0" />
+                                  <span className="text-foreground truncate">{profile.email}</span>
+                                </div>
+                              )}
+                              {profile.phone && (
+                                <div className="flex items-center space-x-2 text-sm">
+                                  <Phone className="h-4 w-4 text-muted-foreground shrink-0" />
+                                  <span className="text-foreground">{profile.phone}</span>
+                                </div>
+                              )}
+                              <div className="flex items-center space-x-2 text-sm">
+                                <Calendar className="h-4 w-4 text-muted-foreground shrink-0" />
+                                <span className="text-muted-foreground">Created {profile.createdAt}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-end space-x-2 shrink-0">
+                          <Button variant="ghost" size="sm" onClick={() => navigate(`/broker/business-profiles/${profile.id}`)}>
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={() => handleEditProfile(profile)}>
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={() => handleDeleteProfile(profile.id)}>
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
                         </div>
                       </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Button variant="ghost" size="sm" onClick={() => navigate(`/broker/business-profiles/${profile.id}`)}>
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm" onClick={() => handleEditProfile(profile)}>
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm" onClick={() => handleDeleteProfile(profile.id)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
+                    </CardContent>
+                  </Card>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-8">
+              <div className="text-center py-12">
                 <Building className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                 <h3 className="text-lg font-medium mb-2">No business profiles</h3>
-                <p className="text-muted-foreground mb-4">
+                <p className="text-muted-foreground mb-6 max-w-sm mx-auto">
                   Create your first business profile to start submitting deals.
                 </p>
                 <Button onClick={handleCreateProfile}>
