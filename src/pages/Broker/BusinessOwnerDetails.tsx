@@ -175,85 +175,160 @@ const BusinessOwnerDetails = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {/* Desktop view */}
-            <div className="hidden md:block rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>File Name</TableHead>
-                    <TableHead>Document Type</TableHead>
-                    <TableHead>File Size</TableHead>
-                    <TableHead>Upload Date</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {uploadedFiles.map((file) => (
-                    <TableRow key={file.id}>
-                      <TableCell>
-                        <div className="flex items-center space-x-2">
-                          <FileText className="h-4 w-4 text-muted-foreground" />
-                          <span className="font-medium text-sm">{file.fileName}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Select 
-                          value={file.type} 
-                          onValueChange={(value) => handleTypeChange(file.id, value)}
-                        >
-                          <SelectTrigger className="w-[140px]">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {Object.entries(DOCUMENT_TYPES).map(([key, label]) => (
-                              <SelectItem key={key} value={key}>
-                                {label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </TableCell>
-                      <TableCell className="text-sm">{file.fileSize.toFixed(1)} MB</TableCell>
-                      <TableCell className="text-sm">{file.uploadedAt}</TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end space-x-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleView(file)}
-                          >
-                            <Eye className="h-4 w-4 mr-1" />
-                            View
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleDownload(file)}
-                          >
-                            <Download className="h-4 w-4 mr-1" />
-                            Download
-                          </Button>
-                          <input
-                            type="file"
-                            id={`replace-${file.id}`}
-                            className="hidden"
-                            accept=".pdf,.jpg,.jpeg,.png"
-                            onChange={(e) => handleFileReplace(file.id, e)}
-                          />
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => document.getElementById(`replace-${file.id}`)?.click()}
-                          >
-                            <Upload className="h-4 w-4 mr-1" />
-                            Re-upload
-                          </Button>
-                        </div>
-                      </TableCell>
+            {/* Desktop view - improved responsive layout */}
+            <div className="hidden lg:block">
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="min-w-[200px]">File Name</TableHead>
+                      <TableHead className="min-w-[140px]">Document Type</TableHead>
+                      <TableHead className="min-w-[80px]">Size</TableHead>
+                      <TableHead className="min-w-[100px]">Date</TableHead>
+                      <TableHead className="min-w-[120px] text-right">Actions</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {uploadedFiles.map((file) => (
+                      <TableRow key={file.id}>
+                        <TableCell>
+                          <div className="flex items-center space-x-2">
+                            <FileText className="h-4 w-4 text-muted-foreground shrink-0" />
+                            <span className="font-medium text-sm truncate">{file.fileName}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Select 
+                            value={file.type} 
+                            onValueChange={(value) => handleTypeChange(file.id, value)}
+                          >
+                            <SelectTrigger className="w-[130px]">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Object.entries(DOCUMENT_TYPES).map(([key, label]) => (
+                                <SelectItem key={key} value={key}>
+                                  {label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </TableCell>
+                        <TableCell className="text-sm">{file.fileSize.toFixed(1)} MB</TableCell>
+                        <TableCell className="text-sm">{file.uploadedAt}</TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex items-center justify-end space-x-1">
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              onClick={() => handleView(file)}
+                              className="h-8 w-8"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              onClick={() => handleDownload(file)}
+                              className="h-8 w-8"
+                            >
+                              <Download className="h-4 w-4" />
+                            </Button>
+                            <input
+                              type="file"
+                              id={`replace-${file.id}`}
+                              className="hidden"
+                              accept=".pdf,.jpg,.jpeg,.png"
+                              onChange={(e) => handleFileReplace(file.id, e)}
+                            />
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              onClick={() => document.getElementById(`replace-${file.id}`)?.click()}
+                              className="h-8 w-8"
+                            >
+                              <Upload className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
+
+            {/* Tablet view */}
+            <div className="hidden md:block lg:hidden space-y-4">
+              {uploadedFiles.map((file) => (
+                <Card key={file.id} className="p-4">
+                  <div className="space-y-3">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-start space-x-3 flex-1 min-w-0">
+                        <FileText className="h-5 w-5 text-muted-foreground mt-0.5 shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-sm truncate">{file.fileName}</p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {file.fileSize.toFixed(1)} MB • {file.uploadedAt}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-1 ml-2">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => handleView(file)}
+                          className="h-8 w-8"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => handleDownload(file)}
+                          className="h-8 w-8"
+                        >
+                          <Download className="h-4 w-4" />
+                        </Button>
+                        <input
+                          type="file"
+                          id={`replace-tablet-${file.id}`}
+                          className="hidden"
+                          accept=".pdf,.jpg,.jpeg,.png"
+                          onChange={(e) => handleFileReplace(file.id, e)}
+                        />
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => document.getElementById(`replace-tablet-${file.id}`)?.click()}
+                          className="h-8 w-8"
+                        >
+                          <Upload className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground mb-2 block">Document Type</label>
+                      <Select 
+                        value={file.type} 
+                        onValueChange={(value) => handleTypeChange(file.id, value)}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Object.entries(DOCUMENT_TYPES).map(([key, label]) => (
+                            <SelectItem key={key} value={key}>
+                              {label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </Card>
+              ))}
             </div>
 
             {/* Mobile view */}
@@ -291,43 +366,39 @@ const BusinessOwnerDetails = () => {
                         </Select>
                       </div>
                       
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className="flex items-center justify-center space-x-2">
                         <Button
                           variant="outline"
-                          size="sm"
+                          size="icon"
                           onClick={() => handleView(file)}
-                          className="w-full text-xs"
+                          className="h-10 w-10"
                         >
-                          <Eye className="h-3 w-3 mr-1" />
-                          View
+                          <Eye className="h-5 w-5" />
                         </Button>
                         <Button
                           variant="outline"
-                          size="sm"
+                          size="icon"
                           onClick={() => handleDownload(file)}
-                          className="w-full text-xs"
+                          className="h-10 w-10"
                         >
-                          <Download className="h-3 w-3 mr-1" />
-                          Download
+                          <Download className="h-5 w-5" />
+                        </Button>
+                        <input
+                          type="file"
+                          id={`replace-mobile-${file.id}`}
+                          className="hidden"
+                          accept=".pdf,.jpg,.jpeg,.png"
+                          onChange={(e) => handleFileReplace(file.id, e)}
+                        />
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => document.getElementById(`replace-mobile-${file.id}`)?.click()}
+                          className="h-10 w-10"
+                        >
+                          <Upload className="h-5 w-5" />
                         </Button>
                       </div>
-                      
-                      <input
-                        type="file"
-                        id={`replace-mobile-${file.id}`}
-                        className="hidden"
-                        accept=".pdf,.jpg,.jpeg,.png"
-                        onChange={(e) => handleFileReplace(file.id, e)}
-                      />
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => document.getElementById(`replace-mobile-${file.id}`)?.click()}
-                        className="w-full text-xs"
-                      >
-                        <Upload className="h-3 w-3 mr-1" />
-                        Re-upload File
-                      </Button>
                     </div>
                   </div>
                 </Card>
