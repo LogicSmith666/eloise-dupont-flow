@@ -137,8 +137,8 @@ const BusinessOwnerDetails = () => {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">{dealName}</h1>
-            <p className="text-muted-foreground">
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{dealName}</h1>
+            <p className="text-muted-foreground text-sm md:text-base">
               {businessName} - {requestedAmount}
             </p>
           </div>
@@ -146,22 +146,22 @@ const BusinessOwnerDetails = () => {
         
         <Card>
           <CardHeader>
-            <CardTitle>Deal Summary</CardTitle>
-            <CardDescription>Basic information about this deal submission</CardDescription>
+            <CardTitle className="text-lg md:text-xl">Deal Summary</CardTitle>
+            <CardDescription className="text-sm">Basic information about this deal submission</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
               <div className="rounded-lg border p-4">
                 <p className="text-sm text-muted-foreground mb-2">Business Name</p>
-                <p className="text-lg font-semibold">{businessName}</p>
+                <p className="text-base md:text-lg font-semibold break-words">{businessName}</p>
               </div>
               <div className="rounded-lg border p-4">
                 <p className="text-sm text-muted-foreground mb-2">Deal Name</p>
-                <p className="text-lg font-semibold">{dealName}</p>
+                <p className="text-base md:text-lg font-semibold break-words">{dealName}</p>
               </div>
               <div className="rounded-lg border p-4">
                 <p className="text-sm text-muted-foreground mb-2">Requested Amount</p>
-                <p className="text-lg font-semibold">{requestedAmount}</p>
+                <p className="text-base md:text-lg font-semibold">{requestedAmount}</p>
               </div>
             </div>
           </CardContent>
@@ -169,13 +169,14 @@ const BusinessOwnerDetails = () => {
         
         <Card>
           <CardHeader>
-            <CardTitle>Uploaded Documents</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-lg md:text-xl">Uploaded Documents</CardTitle>
+            <CardDescription className="text-sm">
               View, download, or update the documents submitted for this deal
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="rounded-md border">
+            {/* Desktop view */}
+            <div className="hidden md:block rounded-md border">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -192,7 +193,7 @@ const BusinessOwnerDetails = () => {
                       <TableCell>
                         <div className="flex items-center space-x-2">
                           <FileText className="h-4 w-4 text-muted-foreground" />
-                          <span className="font-medium">{file.fileName}</span>
+                          <span className="font-medium text-sm">{file.fileName}</span>
                         </div>
                       </TableCell>
                       <TableCell>
@@ -212,8 +213,8 @@ const BusinessOwnerDetails = () => {
                           </SelectContent>
                         </Select>
                       </TableCell>
-                      <TableCell>{file.fileSize.toFixed(1)} MB</TableCell>
-                      <TableCell>{file.uploadedAt}</TableCell>
+                      <TableCell className="text-sm">{file.fileSize.toFixed(1)} MB</TableCell>
+                      <TableCell className="text-sm">{file.uploadedAt}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end space-x-2">
                           <Button
@@ -253,6 +254,84 @@ const BusinessOwnerDetails = () => {
                   ))}
                 </TableBody>
               </Table>
+            </div>
+
+            {/* Mobile view */}
+            <div className="block md:hidden space-y-4">
+              {uploadedFiles.map((file) => (
+                <Card key={file.id} className="p-4">
+                  <div className="space-y-4">
+                    <div className="flex items-start space-x-3">
+                      <FileText className="h-5 w-5 text-muted-foreground mt-0.5 shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm break-all">{file.fileName}</p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {file.fileSize.toFixed(1)} MB • {file.uploadedAt}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      <div>
+                        <label className="text-xs font-medium text-muted-foreground mb-2 block">Document Type</label>
+                        <Select 
+                          value={file.type} 
+                          onValueChange={(value) => handleTypeChange(file.id, value)}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Object.entries(DOCUMENT_TYPES).map(([key, label]) => (
+                              <SelectItem key={key} value={key}>
+                                {label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleView(file)}
+                          className="w-full text-xs"
+                        >
+                          <Eye className="h-3 w-3 mr-1" />
+                          View
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDownload(file)}
+                          className="w-full text-xs"
+                        >
+                          <Download className="h-3 w-3 mr-1" />
+                          Download
+                        </Button>
+                      </div>
+                      
+                      <input
+                        type="file"
+                        id={`replace-mobile-${file.id}`}
+                        className="hidden"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        onChange={(e) => handleFileReplace(file.id, e)}
+                      />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => document.getElementById(`replace-mobile-${file.id}`)?.click()}
+                        className="w-full text-xs"
+                      >
+                        <Upload className="h-3 w-3 mr-1" />
+                        Re-upload File
+                      </Button>
+                    </div>
+                  </div>
+                </Card>
+              ))}
             </div>
           </CardContent>
         </Card>

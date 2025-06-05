@@ -87,17 +87,17 @@ const BrokerDashboard = () => {
     <DashboardLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Broker Dashboard</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Broker Dashboard</h1>
+          <p className="text-muted-foreground text-sm md:text-base">
             {user?.firmName || "Your Firm"} - Upload and manage business owner applications.
           </p>
         </div>
         
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <p className="font-medium">Time Period:</p>
+        <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
+          <div className="flex flex-col space-y-2 md:flex-row md:items-center md:space-y-0 md:gap-2">
+            <p className="font-medium text-sm md:text-base">Time Period:</p>
             <Select value={timePeriod} onValueChange={(value: keyof typeof TIME_PERIODS) => setTimePeriod(value)}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-full md:w-[180px]">
                 <SelectValue placeholder="Select time period" />
               </SelectTrigger>
               <SelectContent>
@@ -108,26 +108,26 @@ const BrokerDashboard = () => {
             </Select>
           </div>
           
-          <div className="relative">
+          <div className="relative w-full md:w-auto">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <input
               type="text"
               placeholder="Search deals..."
-              className="pl-8 h-9 w-[200px] rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              className="pl-8 h-9 w-full md:w-[200px] rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:gap-6 grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">My Deals</CardTitle>
+              <CardTitle className="text-xs md:text-sm font-medium">My Deals</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">{filteredApplications.length}</div>
-              <p className="text-xs text-muted-foreground mt-1">
+              <div className="text-xl md:text-3xl font-bold">{filteredApplications.length}</div>
+              <p className="text-xs text-muted-foreground mt-1 leading-tight">
                 {filteredApplications.length > MOCK_APPLICATIONS.filter(a => TIME_PERIODS["month"].filter(a.date)).length 
                   ? `+${filteredApplications.length - MOCK_APPLICATIONS.filter(a => TIME_PERIODS["month"].filter(a.date)).length} from last month`
                   : "No change from last month"
@@ -138,10 +138,10 @@ const BrokerDashboard = () => {
           
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Approved</CardTitle>
+              <CardTitle className="text-xs md:text-sm font-medium">Approved</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">{approvedCount}</div>
+              <div className="text-xl md:text-3xl font-bold">{approvedCount}</div>
               <p className="text-xs text-muted-foreground mt-1">
                 {(approvedCount / (filteredApplications.length || 1) * 100).toFixed(0)}% approval rate
               </p>
@@ -150,10 +150,10 @@ const BrokerDashboard = () => {
           
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Processing</CardTitle>
+              <CardTitle className="text-xs md:text-sm font-medium">Processing</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">{processingCount}</div>
+              <div className="text-xl md:text-3xl font-bold">{processingCount}</div>
               <p className="text-xs text-muted-foreground mt-1">
                 Average 3 days to process
               </p>
@@ -162,19 +162,19 @@ const BrokerDashboard = () => {
           
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Total Funded</CardTitle>
+              <CardTitle className="text-xs md:text-sm font-medium">Total Funded</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">${totalFunded.toLocaleString()}</div>
+              <div className="text-xl md:text-3xl font-bold">${totalFunded.toLocaleString()}</div>
             </CardContent>
           </Card>
         </div>
         
         <Card className="eloise-gradient text-white border-0 shadow-lg">
-          <CardContent className="p-6 flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="space-y-2">
-              <h3 className="text-xl font-bold">Create New Deal</h3>
-              <p className="text-white/80">
+          <CardContent className="p-4 md:p-6 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6">
+            <div className="space-y-2 text-center md:text-left">
+              <h3 className="text-lg md:text-xl font-bold">Create New Deal</h3>
+              <p className="text-white/80 text-sm md:text-base">
                 Upload business owner's financial documents to process a new funding application.
               </p>
             </div>
@@ -182,7 +182,7 @@ const BrokerDashboard = () => {
               variant="secondary" 
               size="lg"
               onClick={handleCreateNewDeal}
-              className="shrink-0"
+              className="shrink-0 w-full md:w-auto"
             >
               <Upload className="mr-2 h-4 w-4" /> Create New Deal
             </Button>
@@ -191,16 +191,16 @@ const BrokerDashboard = () => {
         
         <Card>
           <CardHeader>
-            <CardTitle>Deal History</CardTitle>
-            <CardDescription>Manage your deals and track their status.</CardDescription>
+            <CardTitle className="text-lg md:text-xl">Deal History</CardTitle>
+            <CardDescription className="text-sm">Manage your deals and track their status.</CardDescription>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="all" className="w-full">
-              <TabsList className="mb-4">
-                <TabsTrigger value="all">All Deals</TabsTrigger>
-                <TabsTrigger value="approved">Approved</TabsTrigger>
-                <TabsTrigger value="processing">Processing</TabsTrigger>
-                <TabsTrigger value="rejected">Rejected</TabsTrigger>
+              <TabsList className="mb-4 grid w-full grid-cols-2 md:grid-cols-4">
+                <TabsTrigger value="all" className="text-xs md:text-sm">All</TabsTrigger>
+                <TabsTrigger value="approved" className="text-xs md:text-sm">Approved</TabsTrigger>
+                <TabsTrigger value="processing" className="text-xs md:text-sm">Processing</TabsTrigger>
+                <TabsTrigger value="rejected" className="text-xs md:text-sm">Rejected</TabsTrigger>
               </TabsList>
               
               <TabsContent value="all">
@@ -226,53 +226,99 @@ const BrokerDashboard = () => {
   );
 };
 
-// Deal list table component - Changed to PascalCase to follow React component naming convention
+// Mobile-responsive deal list table component
 const DealListTable = ({ deals, navigate }: { deals: typeof MOCK_APPLICATIONS, navigate: (path: string) => void }) => {
   return (
-    <div className="rounded-md border">
-      <div className="grid grid-cols-5 p-4 font-medium">
-        <div>Business Name</div>
-        <div>Amount</div>
-        <div>Status</div>
-        <div>Date</div>
-        <div className="text-right">Actions</div>
-      </div>
-      
-      {deals.length > 0 ? (
-        deals.map(deal => (
-          <div key={deal.id} className="grid grid-cols-5 p-4 border-t items-center">
-            <div className="font-medium">{deal.businessName}</div>
-            <div>{deal.amount}</div>
-            <div>
-              <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium 
-                ${deal.status === 'Approved' 
-                  ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' 
-                  : deal.status === 'Rejected' 
-                    ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' 
-                    : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
-                }`}
-              >
-                {deal.status}
-              </span>
-            </div>
-            <div>{deal.date}</div>
-            <div className="text-right">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="flex items-center"
-                onClick={() => navigate(`/broker/applications/${deal.id}`)}
-              >
-                View Files <ArrowRight className="ml-1 h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        ))
-      ) : (
-        <div className="text-center py-8 text-muted-foreground">
-          No deals found matching your criteria
+    <div className="space-y-4">
+      {/* Desktop view */}
+      <div className="hidden md:block rounded-md border">
+        <div className="grid grid-cols-5 p-4 font-medium text-sm bg-muted/50">
+          <div>Business Name</div>
+          <div>Amount</div>
+          <div>Status</div>
+          <div>Date</div>
+          <div className="text-right">Actions</div>
         </div>
-      )}
+        
+        {deals.length > 0 ? (
+          deals.map(deal => (
+            <div key={deal.id} className="grid grid-cols-5 p-4 border-t items-center text-sm">
+              <div className="font-medium">{deal.businessName}</div>
+              <div>{deal.amount}</div>
+              <div>
+                <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium 
+                  ${deal.status === 'Approved' 
+                    ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' 
+                    : deal.status === 'Rejected' 
+                      ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' 
+                      : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
+                  }`}
+                >
+                  {deal.status}
+                </span>
+              </div>
+              <div>{deal.date}</div>
+              <div className="text-right">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="flex items-center"
+                  onClick={() => navigate(`/broker/applications/${deal.id}`)}
+                >
+                  View Files <ArrowRight className="ml-1 h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="text-center py-8 text-muted-foreground">
+            No deals found matching your criteria
+          </div>
+        )}
+      </div>
+
+      {/* Mobile view */}
+      <div className="block md:hidden space-y-3">
+        {deals.length > 0 ? (
+          deals.map(deal => (
+            <Card key={deal.id} className="p-4">
+              <div className="space-y-3">
+                <div className="flex justify-between items-start">
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-medium text-sm truncate">{deal.businessName}</h4>
+                    <p className="text-sm text-muted-foreground">{deal.amount}</p>
+                  </div>
+                  <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ml-2 
+                    ${deal.status === 'Approved' 
+                      ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' 
+                      : deal.status === 'Rejected' 
+                        ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' 
+                        : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
+                    }`}
+                  >
+                    {deal.status}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-muted-foreground">{deal.date}</span>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => navigate(`/broker/applications/${deal.id}`)}
+                    className="text-xs"
+                  >
+                    View Files
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          ))
+        ) : (
+          <div className="text-center py-8 text-muted-foreground text-sm">
+            No deals found matching your criteria
+          </div>
+        )}
+      </div>
     </div>
   );
 };

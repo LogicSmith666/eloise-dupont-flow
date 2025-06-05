@@ -170,8 +170,8 @@ const UploadDocuments = () => {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Create New Deal</h1>
-            <p className="text-muted-foreground">
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Create New Deal</h1>
+            <p className="text-muted-foreground text-sm md:text-base">
               Submit a new funding deal with business documentation.
             </p>
           </div>
@@ -181,16 +181,16 @@ const UploadDocuments = () => {
           <div className="grid gap-6">
             <Card>
               <CardHeader>
-                <CardTitle>Select Business Profile</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-lg md:text-xl">Select Business Profile</CardTitle>
+                <CardDescription className="text-sm">
                   Choose the business owner profile for this deal submission.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="businessProfile">Business Profile *</Label>
+                  <Label htmlFor="businessProfile" className="text-sm md:text-base">Business Profile *</Label>
                   <Select value={selectedBusinessProfile} onValueChange={setSelectedBusinessProfile} required>
-                    <SelectTrigger>
+                    <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select a business profile" />
                     </SelectTrigger>
                     <SelectContent>
@@ -213,41 +213,44 @@ const UploadDocuments = () => {
 
             <Card>
               <CardHeader>
-                <CardTitle>Deal Information</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-lg md:text-xl">Deal Information</CardTitle>
+                <CardDescription className="text-sm">
                   Provide details about the funding request.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="dealName">Deal Name *</Label>
+                    <Label htmlFor="dealName" className="text-sm md:text-base">Deal Name *</Label>
                     <Input 
                       id="dealName" 
                       placeholder="Enter a descriptive name for this deal"
                       value={dealName}
                       onChange={(e) => setDealName(e.target.value)}
                       required
+                      className="w-full"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="requestedAmount">Requested Amount ($)</Label>
+                    <Label htmlFor="requestedAmount" className="text-sm md:text-base">Requested Amount ($)</Label>
                     <Input 
                       id="requestedAmount" 
                       placeholder="25000"
                       value={requestedAmount}
                       onChange={(e) => setRequestedAmount(e.target.value.replace(/[^0-9]/g, ''))}
+                      className="w-full"
                     />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="dealDescription">Deal Description</Label>
+                  <Label htmlFor="dealDescription" className="text-sm md:text-base">Deal Description</Label>
                   <Textarea 
                     id="dealDescription" 
                     placeholder="Provide details about the funding purpose and business needs"
                     value={dealDescription}
                     onChange={(e) => setDealDescription(e.target.value)}
                     rows={3}
+                    className="w-full resize-none"
                   />
                 </div>
               </CardContent>
@@ -255,18 +258,18 @@ const UploadDocuments = () => {
             
             <Card>
               <CardHeader>
-                <CardTitle>Deal Documents</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-lg md:text-xl">Deal Documents</CardTitle>
+                <CardDescription className="text-sm">
                   Upload documents and categorize them by type. Each document must have a type selected.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid place-items-center border-2 border-dashed rounded-md p-8 cursor-pointer hover:bg-muted/50 transition-colors">
-                  <div className="text-center space-y-4">
+                <div className="grid place-items-center border-2 border-dashed rounded-md p-6 md:p-8 cursor-pointer hover:bg-muted/50 transition-colors">
+                  <div className="text-center space-y-4 w-full">
                     <div className="flex flex-col items-center justify-center">
-                      <Upload className="h-10 w-10 text-muted-foreground" />
-                      <p className="mt-2 text-lg font-semibold">Upload Documents</p>
-                      <p className="text-sm text-muted-foreground">
+                      <Upload className="h-8 w-8 md:h-10 md:w-10 text-muted-foreground" />
+                      <p className="mt-2 text-base md:text-lg font-semibold">Upload Documents</p>
+                      <p className="text-xs md:text-sm text-muted-foreground text-center">
                         Support for PDF, JPEG, PNG up to 10MB each
                       </p>
                     </div>
@@ -274,7 +277,6 @@ const UploadDocuments = () => {
                       id="file-upload" 
                       type="file" 
                       className="hidden"
-                      multiple
                       accept={SUPPORTED_TYPES.join(",")}
                       onChange={handleFileChange}
                     />
@@ -282,8 +284,9 @@ const UploadDocuments = () => {
                       type="button"
                       variant="outline"
                       onClick={() => document.getElementById("file-upload")?.click()}
+                      className="w-full md:w-auto"
                     >
-                      Select Files
+                      Select File
                     </Button>
                   </div>
                 </div>
@@ -297,32 +300,36 @@ const UploadDocuments = () => {
                       {files.map((fileItem) => (
                         <div 
                           key={fileItem.id}
-                          className="flex items-center justify-between p-3 border rounded-md bg-background"
+                          className="flex flex-col space-y-3 md:flex-row md:items-center md:justify-between md:space-y-0 p-3 border rounded-md bg-background"
                         >
-                          <div className="flex items-center space-x-3 flex-1">
-                            <FileText className="h-5 w-5 text-muted-foreground" />
-                            <div className="text-sm flex-1">
-                              <p className="font-medium truncate max-w-[200px]">{fileItem.file.name}</p>
+                          <div className="flex items-center space-x-3 flex-1 min-w-0">
+                            <FileText className="h-5 w-5 text-muted-foreground shrink-0" />
+                            <div className="text-sm flex-1 min-w-0">
+                              <p className="font-medium truncate">{fileItem.file.name}</p>
                               <p className="text-xs text-muted-foreground">
                                 {(fileItem.file.size / 1024 / 1024).toFixed(2)} MB
                               </p>
                             </div>
-                            <div className="flex items-center space-x-2">
-                              <Select 
-                                value={fileItem.type} 
-                                onValueChange={(value) => updateFileType(fileItem.id, value)}
-                              >
-                                <SelectTrigger className="w-[150px]">
-                                  <SelectValue placeholder="Select type" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {DOCUMENT_TYPES.map((type) => (
-                                    <SelectItem key={type.value} value={type.value}>
-                                      {type.label}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
+                          </div>
+                          
+                          <div className="flex flex-col space-y-2 md:flex-row md:items-center md:space-y-0 md:space-x-2 md:shrink-0">
+                            <Select 
+                              value={fileItem.type} 
+                              onValueChange={(value) => updateFileType(fileItem.id, value)}
+                            >
+                              <SelectTrigger className="w-full md:w-[150px]">
+                                <SelectValue placeholder="Select type" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {DOCUMENT_TYPES.map((type) => (
+                                  <SelectItem key={type.value} value={type.value}>
+                                    {type.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            
+                            <div className="flex space-x-2">
                               <input
                                 type="file"
                                 id={`replace-${fileItem.id}`}
@@ -335,6 +342,7 @@ const UploadDocuments = () => {
                                 variant="outline"
                                 size="sm"
                                 onClick={() => document.getElementById(`replace-${fileItem.id}`)?.click()}
+                                className="shrink-0"
                               >
                                 <Edit className="h-4 w-4" />
                               </Button>
@@ -343,6 +351,7 @@ const UploadDocuments = () => {
                                 variant="ghost" 
                                 size="sm"
                                 onClick={() => removeFile(fileItem.id)}
+                                className="shrink-0"
                               >
                                 <X className="h-4 w-4" />
                               </Button>
@@ -358,8 +367,8 @@ const UploadDocuments = () => {
             
             <Card>
               <CardHeader>
-                <CardTitle>Submit Deal</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-lg md:text-xl">Submit Deal</CardTitle>
+                <CardDescription className="text-sm">
                   Submit the deal for processing. Our team will review the documents and provide funding approval.
                 </CardDescription>
               </CardHeader>
@@ -369,17 +378,19 @@ const UploadDocuments = () => {
                   share these financial documents for the purpose of obtaining funding.
                 </p>
               </CardContent>
-              <CardFooter className="flex justify-between">
+              <CardFooter className="flex flex-col space-y-2 md:flex-row md:justify-between md:space-y-0">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => navigate('/broker/dashboard')}
+                  className="w-full md:w-auto"
                 >
                   Cancel
                 </Button>
                 <Button 
                   type="submit"
                   disabled={uploading || files.length === 0 || !dealName || !selectedBusinessProfile || files.some(f => !f.type)}
+                  className="w-full md:w-auto"
                 >
                   {uploading ? "Submitting..." : "Submit Deal"}
                 </Button>
