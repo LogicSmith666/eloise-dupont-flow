@@ -1,14 +1,14 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Download, Eye, Upload, FileText, Plus } from "lucide-react";
+import { ArrowLeft, Download, Eye, Upload, FileText, Plus, Trash2 } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 // Document types mapping
 const DOCUMENT_TYPES = {
@@ -68,6 +68,13 @@ const BusinessOwnerDetails = () => {
   const [pendingTypeChange, setPendingTypeChange] = useState<{
     fileId: string;
     newType: string;
+    fileName: string;
+  } | null>(null);
+
+  // Delete confirmation state
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [fileToDelete, setFileToDelete] = useState<{
+    id: string;
     fileName: string;
   } | null>(null);
   
@@ -183,6 +190,36 @@ const BusinessOwnerDetails = () => {
     setShowTypeChangeModal(false);
     setPendingTypeChange(null);
   };
+
+  // Handle delete file request
+  const handleDeleteRequest = (file: typeof MOCK_UPLOADED_FILES[0]) => {
+    setFileToDelete({
+      id: file.id,
+      fileName: file.fileName
+    });
+    setShowDeleteConfirmation(true);
+  };
+
+  // Confirm file deletion
+  const handleConfirmDelete = () => {
+    if (!fileToDelete) return;
+
+    setUploadedFiles(prev => prev.filter(f => f.id !== fileToDelete.id));
+
+    toast({
+      title: "File deleted",
+      description: `${fileToDelete.fileName} has been deleted successfully.`,
+    });
+
+    setShowDeleteConfirmation(false);
+    setFileToDelete(null);
+  };
+
+  // Cancel file deletion
+  const handleCancelDelete = () => {
+    setShowDeleteConfirmation(false);
+    setFileToDelete(null);
+  };
   
   return (
     <DashboardLayout>
@@ -264,7 +301,7 @@ const BusinessOwnerDetails = () => {
                       <TableHead className="min-w-[140px]">Document Type</TableHead>
                       <TableHead className="min-w-[80px]">Size</TableHead>
                       <TableHead className="min-w-[100px]">Date</TableHead>
-                      <TableHead className="min-w-[120px] text-right">Actions</TableHead>
+                      <TableHead className="min-w-[160px] text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -328,6 +365,14 @@ const BusinessOwnerDetails = () => {
                             >
                               <Upload className="h-4 w-4" />
                             </Button>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              onClick={() => handleDeleteRequest(file)}
+                              className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
                           </div>
                         </TableCell>
                       </TableRow>
@@ -383,6 +428,14 @@ const BusinessOwnerDetails = () => {
                           className="h-8 w-8"
                         >
                           <Upload className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => handleDeleteRequest(file)}
+                          className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
+                        >
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
@@ -445,22 +498,22 @@ const BusinessOwnerDetails = () => {
                         </Select>
                       </div>
                       
-                      <div className="flex items-center justify-center space-x-2">
+                      <div className="grid grid-cols-4 gap-2">
                         <Button
                           variant="outline"
                           size="icon"
                           onClick={() => handleView(file)}
-                          className="h-10 w-10"
+                          className="h-10 w-full"
                         >
-                          <Eye className="h-5 w-5" />
+                          <Eye className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="outline"
                           size="icon"
                           onClick={() => handleDownload(file)}
-                          className="h-10 w-10"
+                          className="h-10 w-full"
                         >
-                          <Download className="h-5 w-5" />
+                          <Download className="h-4 w-4" />
                         </Button>
                         <input
                           type="file"
@@ -473,9 +526,17 @@ const BusinessOwnerDetails = () => {
                           variant="outline"
                           size="icon"
                           onClick={() => document.getElementById(`replace-mobile-${file.id}`)?.click()}
-                          className="h-10 w-10"
+                          className="h-10 w-full"
                         >
-                          <Upload className="h-5 w-5" />
+                          <Upload className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => handleDeleteRequest(file)}
+                          className="h-10 w-full text-red-600 hover:text-red-700 hover:bg-red-50"
+                        >
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
@@ -506,6 +567,24 @@ const BusinessOwnerDetails = () => {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {/* Delete Confirmation Modal */}
+        <AlertDialog open={showDeleteConfirmation} onOpenChange={setShowDeleteConfirmation}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete File</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete "{fileToDelete?.fileName}"? This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={handleCancelDelete}>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleConfirmDelete} className="bg-red-600 hover:bg-red-700">
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </DashboardLayout>
   );

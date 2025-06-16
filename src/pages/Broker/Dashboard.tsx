@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { Upload, ArrowRight, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Select,
   SelectContent,
@@ -199,30 +198,7 @@ const BrokerDashboard = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="all" className="w-full">
-              <TabsList className="mb-4 grid w-full grid-cols-4 h-auto">
-                <TabsTrigger value="all" className="text-xs md:text-sm py-2 px-2">All</TabsTrigger>
-                <TabsTrigger value="approved" className="text-xs md:text-sm py-2 px-2">Approved</TabsTrigger>
-                <TabsTrigger value="processing" className="text-xs md:text-sm py-2 px-2">Processing</TabsTrigger>
-                <TabsTrigger value="rejected" className="text-xs md:text-sm py-2 px-2">Rejected</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="all">
-                <DealListTable deals={filteredApplications} navigate={navigate} />
-              </TabsContent>
-              
-              <TabsContent value="approved">
-                <DealListTable deals={filteredApplications.filter(deal => deal.status === 'Approved')} navigate={navigate} />
-              </TabsContent>
-              
-              <TabsContent value="processing">
-                <DealListTable deals={filteredApplications.filter(deal => deal.status === 'Processing')} navigate={navigate} />
-              </TabsContent>
-              
-              <TabsContent value="rejected">
-                <DealListTable deals={filteredApplications.filter(deal => deal.status === 'Rejected')} navigate={navigate} />
-              </TabsContent>
-            </Tabs>
+            <DealListTable deals={filteredApplications} navigate={navigate} />
           </CardContent>
         </Card>
       </div>
@@ -236,31 +212,18 @@ const DealListTable = ({ deals, navigate }: { deals: typeof MOCK_APPLICATIONS, n
     <div className="space-y-4">
       {/* Desktop view */}
       <div className="hidden md:block rounded-md border">
-        <div className="grid grid-cols-5 p-4 font-medium text-sm bg-muted/50">
+        <div className="grid grid-cols-4 p-4 font-medium text-sm bg-muted/50">
           <div>Business Name</div>
           <div>Amount</div>
-          <div>Status</div>
           <div>Date</div>
           <div className="text-right">Actions</div>
         </div>
         
         {deals.length > 0 ? (
           deals.map(deal => (
-            <div key={deal.id} className="grid grid-cols-5 p-4 border-t items-center text-sm">
+            <div key={deal.id} className="grid grid-cols-4 p-4 border-t items-center text-sm">
               <div className="font-medium">{deal.businessName}</div>
               <div>{deal.amount}</div>
-              <div>
-                <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium 
-                  ${deal.status === 'Approved' 
-                    ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' 
-                    : deal.status === 'Rejected' 
-                      ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' 
-                      : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
-                  }`}
-                >
-                  {deal.status}
-                </span>
-              </div>
               <div>{deal.date}</div>
               <div className="text-right">
                 <Button 
@@ -292,16 +255,6 @@ const DealListTable = ({ deals, navigate }: { deals: typeof MOCK_APPLICATIONS, n
                     <h4 className="font-medium text-sm truncate">{deal.businessName}</h4>
                     <p className="text-sm text-muted-foreground">{deal.amount}</p>
                   </div>
-                  <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ml-2 
-                    ${deal.status === 'Approved' 
-                      ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' 
-                      : deal.status === 'Rejected' 
-                        ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' 
-                        : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
-                    }`}
-                  >
-                    {deal.status}
-                  </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-xs text-muted-foreground">{deal.date}</span>
