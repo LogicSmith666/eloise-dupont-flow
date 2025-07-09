@@ -43,7 +43,7 @@ function App() {
                 <Route 
                   path="/super-admin/dashboard" 
                   element={
-                    <ProtectedRoute requiredRole="super_admin">
+                    <ProtectedRoute allowedRoles={['super_admin']}>
                       <SuperAdminDashboard />
                     </ProtectedRoute>
                   } 
@@ -51,7 +51,7 @@ function App() {
                 <Route 
                   path="/super-admin/firms/:firmId" 
                   element={
-                    <ProtectedRoute requiredRole="super_admin">
+                    <ProtectedRoute allowedRoles={['super_admin']}>
                       <SuperAdminFirmDetails />
                     </ProtectedRoute>
                   } 
@@ -59,7 +59,7 @@ function App() {
                 <Route 
                   path="/super-admin/invites" 
                   element={
-                    <ProtectedRoute requiredRole="super_admin">
+                    <ProtectedRoute allowedRoles={['super_admin']}>
                       <SuperAdminInviteManagement />
                     </ProtectedRoute>
                   } 
@@ -69,7 +69,7 @@ function App() {
                 <Route 
                   path="/firm-admin/dashboard" 
                   element={
-                    <ProtectedRoute requiredRole="firm_admin">
+                    <ProtectedRoute allowedRoles={['firm_admin']}>
                       <FirmAdminDashboard />
                     </ProtectedRoute>
                   } 
@@ -77,7 +77,7 @@ function App() {
                 <Route 
                   path="/firm-admin/brokers" 
                   element={
-                    <ProtectedRoute requiredRole="firm_admin">
+                    <ProtectedRoute allowedRoles={['firm_admin']}>
                       <FirmAdminBrokerManagement />
                     </ProtectedRoute>
                   } 
@@ -87,7 +87,7 @@ function App() {
                 <Route 
                   path="/broker/dashboard" 
                   element={
-                    <ProtectedRoute requiredRole="broker">
+                    <ProtectedRoute allowedRoles={['broker']}>
                       <BrokerDashboard />
                     </ProtectedRoute>
                   } 
@@ -95,7 +95,7 @@ function App() {
                 <Route 
                   path="/broker/upload" 
                   element={
-                    <ProtectedRoute requiredRole="broker">
+                    <ProtectedRoute allowedRoles={['broker']}>
                       <BrokerUploadDocuments />
                     </ProtectedRoute>
                   } 
@@ -103,7 +103,7 @@ function App() {
                 <Route 
                   path="/broker/create-deal-form" 
                   element={
-                    <ProtectedRoute requiredRole="broker">
+                    <ProtectedRoute allowedRoles={['broker']}>
                       <BrokerCreateDealForm />
                     </ProtectedRoute>
                   } 
@@ -111,7 +111,7 @@ function App() {
                 <Route 
                   path="/broker/business-profiles" 
                   element={
-                    <ProtectedRoute requiredRole="broker">
+                    <ProtectedRoute allowedRoles={['broker']}>
                       <BrokerBusinessProfiles />
                     </ProtectedRoute>
                   } 
@@ -119,7 +119,7 @@ function App() {
                 <Route 
                   path="/broker/applications/:id" 
                   element={
-                    <ProtectedRoute requiredRole="broker">
+                    <ProtectedRoute allowedRoles={['broker']}>
                       <BrokerBusinessOwnerDetails />
                     </ProtectedRoute>
                   } 
