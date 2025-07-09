@@ -27,10 +27,10 @@ import BrokerBusinessOwnerDetails from './pages/Broker/BusinessOwnerDetails';
 
 function App() {
   return (
-    <AuthProvider>
-      <InviteProvider>
-        <ThemeProvider>
-          <Router>
+    <ThemeProvider>
+      <Router>
+        <AuthProvider>
+          <InviteProvider>
             <div className="min-h-screen bg-background">
               <Routes>
                 {/* Public routes */}
@@ -130,10 +130,10 @@ function App() {
               </Routes>
               <Toaster />
             </div>
-          </Router>
-        </ThemeProvider>
-      </InviteProvider>
-    </AuthProvider>
+          </InviteProvider>
+        </AuthProvider>
+      </Router>
+    </ThemeProvider>
   );
 }
 
