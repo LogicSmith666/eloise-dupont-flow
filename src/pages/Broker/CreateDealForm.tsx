@@ -90,11 +90,21 @@ const ENTITY_TYPES = [
   "Other"
 ];
 
+// Mock business profiles (in real app, this would come from context or API)
+const MOCK_BUSINESS_PROFILES = [
+  { id: 'bp1', businessName: 'Cozy Coffee Shop' },
+  { id: 'bp2', businessName: 'Urban Fitness Center' },
+  { id: 'bp3', businessName: 'Fresh Grocery Market' },
+  { id: 'bp4', businessName: 'Tech Solutions Inc.' },
+  { id: 'bp5', businessName: 'Green Energy Corp' }
+];
+
 const CreateDealForm = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
   const [formData, setFormData] = useState({
+    businessProfileId: "",
     businessName: "",
     state: "",
     businessDate: "",
@@ -116,7 +126,16 @@ const CreateDealForm = () => {
   const [submitting, setSubmitting] = useState(false);
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    if (field === 'businessProfileId') {
+      const selectedProfile = MOCK_BUSINESS_PROFILES.find(p => p.id === value);
+      setFormData(prev => ({ 
+        ...prev, 
+        [field]: value,
+        businessName: selectedProfile?.businessName || ""
+      }));
+    } else {
+      setFormData(prev => ({ ...prev, [field]: value }));
+    }
   };
 
   const getFilteredIndustry = (rawIndustry: string) => {
@@ -124,7 +143,7 @@ const CreateDealForm = () => {
   };
 
   const validateForm = () => {
-    const required = ['businessName', 'state', 'businessDate', 'revenueType', 'positions', 'nsfs', 'fico', 'entityType', 'rawIndustry', 'hasDefaults'];
+    const required = ['businessProfileId', 'state', 'businessDate', 'revenueType', 'positions', 'nsfs', 'fico', 'entityType', 'rawIndustry', 'hasDefaults'];
     
     for (const field of required) {
       if (!formData[field as keyof typeof formData]) {
@@ -167,9 +186,23 @@ const CreateDealForm = () => {
 
     setSubmitting(true);
 
-    // Simulate form submission
+    // Simulate form submission and save to localStorage for dashboard display
     setTimeout(() => {
-      const filteredIndustry = getFilteredIndustry(formData.rawIndustry);
+      const newDeal = {
+        id: `deal_${Date.now()}`,
+        businessName: formData.businessName,
+        status: 'Processing',
+        amount: formData.revenueType === "Average" 
+          ? `$${(parseInt(formData.monthlyRevenueAvg) * 6).toLocaleString()}` 
+          : `$${((parseInt(formData.depositMonth1) + parseInt(formData.depositMonth2) + parseInt(formData.depositMonth3) + parseInt(formData.depositMonth4)) * 1.5).toLocaleString()}`,
+        date: new Date().toISOString().split('T')[0],
+        formData: formData
+      };
+
+      // Save to localStorage (in real app, this would be an API call)
+      const existingDeals = JSON.parse(localStorage.getItem('createdDeals') || '[]');
+      existingDeals.push(newDeal);
+      localStorage.setItem('createdDeals', JSON.stringify(existingDeals));
       
       toast({
         title: "Deal created successfully!",
@@ -209,20 +242,25 @@ const CreateDealForm = () => {
                   Business Information
                 </CardTitle>
                 <CardDescription>
-                  Basic information about the business
+                  Select business profile and basic information
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="businessName">Business Name *</Label>
-                    <Input
-                      id="businessName"
-                      value={formData.businessName}
-                      onChange={(e) => handleInputChange('businessName', e.target.value)}
-                      placeholder="Enter business name"
-                      required
-                    />
+                    <Label htmlFor="businessProfile">Business Profile *</Label>
+                    <Select value={formData.businessProfileId} onValueChange={(value) => handleInputChange('businessProfileId', value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select business profile" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {MOCK_BUSINESS_PROFILES.map((profile) => (
+                          <SelectItem key={profile.id} value={profile.id}>
+                            {profile.businessName}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="state">State *</Label>

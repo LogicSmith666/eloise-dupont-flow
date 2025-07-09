@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-// Mock data for broker dashboard
+// Mock data for broker dashboard (existing deals)
 const MOCK_APPLICATIONS = [
   { id: 'a1', businessName: 'Cozy Coffee Shop', status: 'Approved', amount: '$25,000', date: '2023-10-25' },
   { id: 'a2', businessName: 'Urban Fitness Center', status: 'Processing', amount: '$75,000', date: '2023-11-02' },
@@ -63,9 +63,19 @@ const BrokerDashboard = () => {
   const navigate = useNavigate();
   const [timePeriod, setTimePeriod] = useState<keyof typeof TIME_PERIODS>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [createdDeals, setCreatedDeals] = useState<any[]>([]);
+  
+  // Load created deals from localStorage
+  useEffect(() => {
+    const deals = JSON.parse(localStorage.getItem('createdDeals') || '[]');
+    setCreatedDeals(deals);
+  }, []);
+
+  // Combine mock applications with created deals
+  const allApplications = [...MOCK_APPLICATIONS, ...createdDeals];
   
   // Filter applications based on time period
-  const filteredApplications = MOCK_APPLICATIONS.filter(app => 
+  const filteredApplications = allApplications.filter(app => 
     TIME_PERIODS[timePeriod].filter(app.date) && 
     app.businessName.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -230,8 +240,17 @@ const BrokerDashboard = () => {
   );
 };
 
-// Mobile-responsive deal list table component
-const DealListTable = ({ deals, navigate }: { deals: typeof MOCK_APPLICATIONS, navigate: (path: string) => void }) => {
+// Updated Mobile-responsive deal list table component
+const DealListTable = ({ deals, navigate }: { deals: any[], navigate: (path: string) => void }) => {
+  const handleViewDeal = (deal: any) => {
+    // Check if it's a created deal (has formData) or legacy deal
+    if (deal.formData) {
+      navigate(`/broker/deals/${deal.id}`);
+    } else {
+      navigate(`/broker/applications/${deal.id}`);
+    }
+  };
+
   return (
     <div className="space-y-4">
       {/* Desktop view */}
@@ -254,9 +273,9 @@ const DealListTable = ({ deals, navigate }: { deals: typeof MOCK_APPLICATIONS, n
                   variant="ghost" 
                   size="sm" 
                   className="flex items-center"
-                  onClick={() => navigate(`/broker/applications/${deal.id}`)}
+                  onClick={() => handleViewDeal(deal)}
                 >
-                  View Files <ArrowRight className="ml-1 h-4 w-4" />
+                  View Deal <ArrowRight className="ml-1 h-4 w-4" />
                 </Button>
               </div>
             </div>
@@ -285,10 +304,10 @@ const DealListTable = ({ deals, navigate }: { deals: typeof MOCK_APPLICATIONS, n
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    onClick={() => navigate(`/broker/applications/${deal.id}`)}
+                    onClick={() => handleViewDeal(deal)}
                     className="text-xs"
                   >
-                    View Files
+                    View Deal
                   </Button>
                 </div>
               </div>

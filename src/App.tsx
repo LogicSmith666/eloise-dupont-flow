@@ -24,6 +24,7 @@ import BrokerUploadDocuments from './pages/Broker/UploadDocuments';
 import BrokerCreateDealForm from './pages/Broker/CreateDealForm';
 import BrokerBusinessProfiles from './pages/Broker/BusinessProfiles';
 import BrokerBusinessOwnerDetails from './pages/Broker/BusinessOwnerDetails';
+import BrokerDealDetails from './pages/Broker/DealDetails';
 
 function App() {
   return (
@@ -121,6 +122,14 @@ function App() {
                   element={
                     <ProtectedRoute allowedRoles={['broker']}>
                       <BrokerBusinessOwnerDetails />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/broker/deals/:id" 
+                  element={
+                    <ProtectedRoute allowedRoles={['broker']}>
+                      <BrokerDealDetails />
                     </ProtectedRoute>
                   } 
                 />
