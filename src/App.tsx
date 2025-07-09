@@ -43,7 +43,7 @@ function App() {
                 <Route 
                   path="/super-admin/dashboard" 
                   element={
-                    <ProtectedRoute allowedRoles={['super_admin']}>
+                    <ProtectedRoute allowedRoles={['superadmin']}>
                       <SuperAdminDashboard />
                     </ProtectedRoute>
                   } 
@@ -51,7 +51,7 @@ function App() {
                 <Route 
                   path="/super-admin/firms/:firmId" 
                   element={
-                    <ProtectedRoute allowedRoles={['super_admin']}>
+                    <ProtectedRoute allowedRoles={['superadmin']}>
                       <SuperAdminFirmDetails />
                     </ProtectedRoute>
                   } 
@@ -59,7 +59,7 @@ function App() {
                 <Route 
                   path="/super-admin/invites" 
                   element={
-                    <ProtectedRoute allowedRoles={['super_admin']}>
+                    <ProtectedRoute allowedRoles={['superadmin']}>
                       <SuperAdminInviteManagement />
                     </ProtectedRoute>
                   } 
@@ -69,7 +69,7 @@ function App() {
                 <Route 
                   path="/firm-admin/dashboard" 
                   element={
-                    <ProtectedRoute allowedRoles={['firm_admin']}>
+                    <ProtectedRoute allowedRoles={['firmadmin']}>
                       <FirmAdminDashboard />
                     </ProtectedRoute>
                   } 
@@ -77,7 +77,7 @@ function App() {
                 <Route 
                   path="/firm-admin/brokers" 
                   element={
-                    <ProtectedRoute allowedRoles={['firm_admin']}>
+                    <ProtectedRoute allowedRoles={['firmadmin']}>
                       <FirmAdminBrokerManagement />
                     </ProtectedRoute>
                   } 
