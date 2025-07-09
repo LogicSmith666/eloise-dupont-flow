@@ -1,10 +1,9 @@
-
 import { useState } from "react";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
-import { Upload, ArrowRight, Search } from "lucide-react";
+import { Upload, ArrowRight, Search, FileText, FormInput } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { 
   Select,
@@ -81,6 +80,10 @@ const BrokerDashboard = () => {
   const handleCreateNewDeal = () => {
     navigate('/broker/upload');
   };
+
+  const handleCreateDealForm = () => {
+    navigate('/broker/create-deal-form');
+  };
   
   return (
     <DashboardLayout>
@@ -142,24 +145,45 @@ const BrokerDashboard = () => {
           </Card>
         </div>
         
-        <Card className="eloise-gradient text-white border-0 shadow-lg">
-          <CardContent className="p-4 md:p-6 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6">
-            <div className="space-y-2 text-center md:text-left">
-              <h3 className="text-lg md:text-xl font-bold">Create New Deal</h3>
-              <p className="text-white/80 text-sm md:text-base">
-                Upload business owner's financial documents to process a new funding application.
-              </p>
-            </div>
-            <Button 
-              variant="secondary" 
-              size="lg"
-              onClick={handleCreateNewDeal}
-              className="shrink-0 w-full md:w-auto"
-            >
-              <Upload className="mr-2 h-4 w-4" /> Create New Deal
-            </Button>
-          </CardContent>
-        </Card>
+        <div className="grid gap-4 md:gap-6 grid-cols-1 lg:grid-cols-2">
+          <Card className="eloise-gradient text-white border-0 shadow-lg">
+            <CardContent className="p-4 md:p-6 flex flex-col items-center justify-between gap-4">
+              <div className="space-y-2 text-center">
+                <h3 className="text-lg md:text-xl font-bold">Upload Documents</h3>
+                <p className="text-white/80 text-sm md:text-base">
+                  Upload business owner's financial documents to process a new funding application.
+                </p>
+              </div>
+              <Button 
+                variant="secondary" 
+                size="lg"
+                onClick={handleCreateNewDeal}
+                className="w-full"
+              >
+                <Upload className="mr-2 h-4 w-4" /> Upload Documents
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-green-600 to-green-700 text-white border-0 shadow-lg">
+            <CardContent className="p-4 md:p-6 flex flex-col items-center justify-between gap-4">
+              <div className="space-y-2 text-center">
+                <h3 className="text-lg md:text-xl font-bold">Manual Entry</h3>
+                <p className="text-white/80 text-sm md:text-base">
+                  Manually enter deal information using our comprehensive form instead of uploading documents.
+                </p>
+              </div>
+              <Button 
+                variant="secondary" 
+                size="lg"
+                onClick={handleCreateDealForm}
+                className="w-full"
+              >
+                <FormInput className="mr-2 h-4 w-4" /> Fill Form
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
         
         <Card>
           <CardHeader>

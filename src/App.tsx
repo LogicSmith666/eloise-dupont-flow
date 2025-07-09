@@ -1,151 +1,140 @@
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./contexts/AuthContext";
-import { ThemeProvider } from "./contexts/ThemeContext";
-import { InviteProvider } from "./contexts/InviteContext";
-import ProtectedRoute from "./components/ProtectedRoute";
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
+import { InviteProvider } from './contexts/InviteContext';
+import { ThemeProvider } from './contexts/ThemeContext';
+import { Toaster } from './components/ui/toaster';
+import ProtectedRoute from './components/ProtectedRoute';
 
 // Pages
-import Landing from "./pages/Landing";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import ForgotPassword from "./pages/ForgotPassword";
-import NotFound from "./pages/NotFound";
+import Landing from './pages/Landing';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+import ForgotPassword from './pages/ForgotPassword';
+import NotFound from './pages/NotFound';
 
-// Super Admin Pages
-import SuperAdminDashboard from "./pages/SuperAdmin/Dashboard";
-import FirmDetails from "./pages/SuperAdmin/FirmDetails";
-import InviteManagement from "./pages/SuperAdmin/InviteManagement";
+// Dashboard pages
+import SuperAdminDashboard from './pages/SuperAdmin/Dashboard';
+import SuperAdminFirmDetails from './pages/SuperAdmin/FirmDetails';
+import SuperAdminInviteManagement from './pages/SuperAdmin/InviteManagement';
+import FirmAdminDashboard from './pages/FirmAdmin/Dashboard';
+import FirmAdminBrokerManagement from './pages/FirmAdmin/BrokerManagement';
+import BrokerDashboard from './pages/Broker/Dashboard';
+import BrokerUploadDocuments from './pages/Broker/UploadDocuments';
+import BrokerCreateDealForm from './pages/Broker/CreateDealForm';
+import BrokerBusinessProfiles from './pages/Broker/BusinessProfiles';
+import BrokerBusinessOwnerDetails from './pages/Broker/BusinessOwnerDetails';
 
-// Firm Admin Pages
-import FirmAdminDashboard from "./pages/FirmAdmin/Dashboard";
-import BrokerManagement from "./pages/FirmAdmin/BrokerManagement";
-
-// Broker Pages
-import BrokerDashboard from "./pages/Broker/Dashboard";
-import BusinessProfiles from "./pages/Broker/BusinessProfiles";
-import UploadDocuments from "./pages/Broker/UploadDocuments";
-import BusinessOwnerDetails from "./pages/Broker/BusinessOwnerDetails";
-
-// Create a new QueryClient instance
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 60000, // 1 minute
-      retry: 1,
-    },
-  },
-});
-
-const App = () => {
+function App() {
   return (
-    <BrowserRouter>
-      <ThemeProvider>
-        <QueryClientProvider client={queryClient}>
-          <TooltipProvider>
-            <AuthProvider>
-              <InviteProvider>
-                <Toaster />
-                <Sonner />
-                <Routes>
-                  {/* Public Routes */}
-                  <Route path="/" element={<Landing />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/signup" element={<Signup />} />
-                  <Route path="/forgot-password" element={<ForgotPassword />} />
+    <AuthProvider>
+      <InviteProvider>
+        <ThemeProvider>
+          <Router>
+            <div className="min-h-screen bg-background">
+              <Routes>
+                {/* Public routes */}
+                <Route path="/" element={<Landing />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
 
-                  {/* Super Admin Routes */}
-                  <Route 
-                    path="/admin/dashboard" 
-                    element={
-                      <ProtectedRoute allowedRoles={["superadmin"]}>
-                        <SuperAdminDashboard />
-                      </ProtectedRoute>
-                    } 
-                  />
-                  <Route 
-                    path="/admin/firms/:firmId" 
-                    element={
-                      <ProtectedRoute allowedRoles={["superadmin"]}>
-                        <FirmDetails />
-                      </ProtectedRoute>
-                    } 
-                  />
-                  <Route 
-                    path="/admin/invites" 
-                    element={
-                      <ProtectedRoute allowedRoles={["superadmin"]}>
-                        <InviteManagement />
-                      </ProtectedRoute>
-                    } 
-                  />
+                {/* Super Admin routes */}
+                <Route 
+                  path="/super-admin/dashboard" 
+                  element={
+                    <ProtectedRoute requiredRole="super_admin">
+                      <SuperAdminDashboard />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/super-admin/firms/:firmId" 
+                  element={
+                    <ProtectedRoute requiredRole="super_admin">
+                      <SuperAdminFirmDetails />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/super-admin/invites" 
+                  element={
+                    <ProtectedRoute requiredRole="super_admin">
+                      <SuperAdminInviteManagement />
+                    </ProtectedRoute>
+                  } 
+                />
 
-                  {/* Firm Admin Routes */}
-                  <Route 
-                    path="/firm/dashboard" 
-                    element={
-                      <ProtectedRoute allowedRoles={["firmadmin"]}>
-                        <FirmAdminDashboard />
-                      </ProtectedRoute>
-                    } 
-                  />
-                  <Route 
-                    path="/firm/brokers" 
-                    element={
-                      <ProtectedRoute allowedRoles={["firmadmin"]}>
-                        <BrokerManagement />
-                      </ProtectedRoute>
-                    } 
-                  />
+                {/* Firm Admin routes */}
+                <Route 
+                  path="/firm-admin/dashboard" 
+                  element={
+                    <ProtectedRoute requiredRole="firm_admin">
+                      <FirmAdminDashboard />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/firm-admin/brokers" 
+                  element={
+                    <ProtectedRoute requiredRole="firm_admin">
+                      <FirmAdminBrokerManagement />
+                    </ProtectedRoute>
+                  } 
+                />
 
-                  {/* Broker Routes */}
-                  <Route 
-                    path="/broker/dashboard" 
-                    element={
-                      <ProtectedRoute allowedRoles={["broker"]}>
-                        <BrokerDashboard />
-                      </ProtectedRoute>
-                    } 
-                  />
-                  <Route 
-                    path="/broker/business-profiles" 
-                    element={
-                      <ProtectedRoute allowedRoles={["broker"]}>
-                        <BusinessProfiles />
-                      </ProtectedRoute>
-                    } 
-                  />
-                  <Route 
-                    path="/broker/upload" 
-                    element={
-                      <ProtectedRoute allowedRoles={["broker"]}>
-                        <UploadDocuments />
-                      </ProtectedRoute>
-                    } 
-                  />
-                  <Route 
-                    path="/broker/applications/:id" 
-                    element={
-                      <ProtectedRoute allowedRoles={["broker"]}>
-                        <BusinessOwnerDetails />
-                      </ProtectedRoute>
-                    } 
-                  />
+                {/* Broker routes */}
+                <Route 
+                  path="/broker/dashboard" 
+                  element={
+                    <ProtectedRoute requiredRole="broker">
+                      <BrokerDashboard />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/broker/upload" 
+                  element={
+                    <ProtectedRoute requiredRole="broker">
+                      <BrokerUploadDocuments />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/broker/create-deal-form" 
+                  element={
+                    <ProtectedRoute requiredRole="broker">
+                      <BrokerCreateDealForm />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/broker/business-profiles" 
+                  element={
+                    <ProtectedRoute requiredRole="broker">
+                      <BrokerBusinessProfiles />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/broker/applications/:id" 
+                  element={
+                    <ProtectedRoute requiredRole="broker">
+                      <BrokerBusinessOwnerDetails />
+                    </ProtectedRoute>
+                  } 
+                />
 
-                  {/* Catch-all route */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </InviteProvider>
-            </AuthProvider>
-          </TooltipProvider>
-        </QueryClientProvider>
-      </ThemeProvider>
-    </BrowserRouter>
+                {/* Catch all route */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+              <Toaster />
+            </div>
+          </Router>
+        </ThemeProvider>
+      </InviteProvider>
+    </AuthProvider>
   );
-};
+}
 
 export default App;
