@@ -16,7 +16,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Mail } from 'lucide-react';
 
 interface InviteFormProps {
-  role: 'superadmin' | 'firmadmin';
+  role: 'SuperAdmin' | 'Admin';
   firms?: Array<{ id: string; name: string }>;
   firmId?: string;
   onComplete?: () => void;
@@ -32,15 +32,15 @@ const InviteForm = ({ role, firms, firmId, onComplete }: InviteFormProps) => {
     if (!email) return;
     
     // For firm admin sending to broker, we already have the firmId
-    const targetRole: UserRole = role === 'superadmin' ? 'firmadmin' : 'broker';
-    const targetFirmId = role === 'superadmin' ? selectedFirmId : firmId;
+    const targetRole: UserRole = role === 'SuperAdmin' ? 'Admin' : 'Broker';
+    const targetFirmId = role === 'SuperAdmin' ? selectedFirmId : firmId;
     
     setIsSending(true);
     
     try {
       await sendInvite(email, targetRole, targetFirmId);
       setEmail('');
-      if (role === 'superadmin') setSelectedFirmId('');
+      if (role === 'SuperAdmin') setSelectedFirmId('');
       if (onComplete) onComplete();
     } catch (error) {
       console.error('Send invite error:', error);
@@ -53,7 +53,7 @@ const InviteForm = ({ role, firms, firmId, onComplete }: InviteFormProps) => {
     <Card className="w-full">
       <CardHeader>
         <CardTitle>
-          {role === 'superadmin' ? 'Invite Firm Admin' : 'Invite Broker'}
+          {role === 'SuperAdmin' ? 'Invite Firm Admin' : 'Invite Broker'}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -68,7 +68,7 @@ const InviteForm = ({ role, firms, firmId, onComplete }: InviteFormProps) => {
           />
         </div>
         
-        {role === 'superadmin' && firms && (
+        {role === 'SuperAdmin' && firms && (
           <div className="space-y-2">
             <Label htmlFor="firm">Select Firm</Label>
             <Select value={selectedFirmId} onValueChange={setSelectedFirmId}>
@@ -91,7 +91,7 @@ const InviteForm = ({ role, firms, firmId, onComplete }: InviteFormProps) => {
           onClick={handleSendInvite} 
           disabled={
             !email || 
-            (role === 'superadmin' && !selectedFirmId) || 
+            (role === 'SuperAdmin' && !selectedFirmId) || 
             isSending || 
             loading
           }

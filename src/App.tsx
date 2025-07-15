@@ -44,7 +44,7 @@ function App() {
                 <Route 
                   path="/super-admin/dashboard" 
                   element={
-                    <ProtectedRoute allowedRoles={['superadmin']}>
+                    <ProtectedRoute allowedRoles={['SuperAdmin']}>
                       <SuperAdminDashboard />
                     </ProtectedRoute>
                   } 
@@ -52,7 +52,7 @@ function App() {
                 <Route 
                   path="/super-admin/firms/:firmId" 
                   element={
-                    <ProtectedRoute allowedRoles={['superadmin']}>
+                    <ProtectedRoute allowedRoles={['SuperAdmin']}>
                       <SuperAdminFirmDetails />
                     </ProtectedRoute>
                   } 
@@ -60,7 +60,7 @@ function App() {
                 <Route 
                   path="/super-admin/invites" 
                   element={
-                    <ProtectedRoute allowedRoles={['superadmin']}>
+                    <ProtectedRoute allowedRoles={['SuperAdmin']}>
                       <SuperAdminInviteManagement />
                     </ProtectedRoute>
                   } 
@@ -70,7 +70,7 @@ function App() {
                 <Route 
                   path="/firm-admin/dashboard" 
                   element={
-                    <ProtectedRoute allowedRoles={['firmadmin']}>
+                    <ProtectedRoute allowedRoles={['Admin']}>
                       <FirmAdminDashboard />
                     </ProtectedRoute>
                   } 
@@ -78,7 +78,7 @@ function App() {
                 <Route 
                   path="/firm-admin/brokers" 
                   element={
-                    <ProtectedRoute allowedRoles={['firmadmin']}>
+                    <ProtectedRoute allowedRoles={['Admin']}>
                       <FirmAdminBrokerManagement />
                     </ProtectedRoute>
                   } 
@@ -88,7 +88,7 @@ function App() {
                 <Route 
                   path="/broker/dashboard" 
                   element={
-                    <ProtectedRoute allowedRoles={['broker']}>
+                    <ProtectedRoute allowedRoles={['Broker']}>
                       <BrokerDashboard />
                     </ProtectedRoute>
                   } 
@@ -96,7 +96,7 @@ function App() {
                 <Route 
                   path="/broker/upload" 
                   element={
-                    <ProtectedRoute allowedRoles={['broker']}>
+                    <ProtectedRoute allowedRoles={['Broker']}>
                       <BrokerUploadDocuments />
                     </ProtectedRoute>
                   } 
@@ -104,7 +104,7 @@ function App() {
                 <Route 
                   path="/broker/create-deal-form" 
                   element={
-                    <ProtectedRoute allowedRoles={['broker']}>
+                    <ProtectedRoute allowedRoles={['Broker']}>
                       <BrokerCreateDealForm />
                     </ProtectedRoute>
                   } 
@@ -112,7 +112,7 @@ function App() {
                 <Route 
                   path="/broker/business-profiles" 
                   element={
-                    <ProtectedRoute allowedRoles={['broker']}>
+                    <ProtectedRoute allowedRoles={['Broker']}>
                       <BrokerBusinessProfiles />
                     </ProtectedRoute>
                   } 
@@ -120,7 +120,7 @@ function App() {
                 <Route 
                   path="/broker/applications/:id" 
                   element={
-                    <ProtectedRoute allowedRoles={['broker']}>
+                    <ProtectedRoute allowedRoles={['Broker']}>
                       <BrokerBusinessOwnerDetails />
                     </ProtectedRoute>
                   } 
@@ -128,7 +128,7 @@ function App() {
                 <Route 
                   path="/broker/deals/:id" 
                   element={
-                    <ProtectedRoute allowedRoles={['broker']}>
+                    <ProtectedRoute allowedRoles={['Broker']}>
                       <BrokerDealDetails />
                     </ProtectedRoute>
                   } 

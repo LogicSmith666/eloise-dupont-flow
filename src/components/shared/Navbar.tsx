@@ -11,13 +11,13 @@ const Navbar = () => {
     if (!user) return;
 
     switch (user.role) {
-      case 'superadmin':
+      case 'SuperAdmin':
         navigate('/super-admin/dashboard');
         break;
-      case 'firmadmin':
+      case 'Admin':
         navigate('/firm-admin/dashboard');
         break;
-      case 'broker':
+      case 'Broker':
         navigate('/broker/dashboard');
         break;
       default:

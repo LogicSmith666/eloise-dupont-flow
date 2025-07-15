@@ -20,21 +20,21 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   
   const getSidebarItems = () => {
     switch (user?.role) {
-      case 'superadmin':
+      case 'SuperAdmin':
         return [
           { label: 'Dashboard', icon: Layout, path: '/super-admin/dashboard' },
           { label: 'Firms', icon: Users, path: '/super-admin/firms' },
           { label: 'Invites', icon: FileText, path: '/super-admin/invites' },
           { label: 'Settings', icon: Settings, path: '/super-admin/settings' },
         ];
-      case 'firmadmin':
+      case 'Admin':
         return [
           { label: 'Dashboard', icon: Layout, path: '/firm-admin/dashboard' },
           { label: 'Brokers', icon: Users, path: '/firm-admin/brokers' },
           { label: 'Applications', icon: FileText, path: '/firm-admin/applications' },
           { label: 'Settings', icon: Settings, path: '/firm-admin/settings' },
         ];
-      case 'broker':
+      case 'Broker':
         return [
           { label: 'Dashboard', icon: Layout, path: '/broker/dashboard' },
           { label: 'Business Profiles', icon: Building, path: '/broker/business-profiles' },

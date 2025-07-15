@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/components/ui/use-toast';
 
-export type UserRole = 'superadmin' | 'firmadmin' | 'broker';
+export type UserRole = 'SuperAdmin' | 'Admin' | 'Broker';
 
 export interface User {
   id: string;
@@ -28,9 +28,9 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // Mock data for demonstration
 const MOCK_USERS: User[] = [
-  { id: '1', name: 'Super Admin', email: 'super@eloisedupont.com', role: 'superadmin' },
-  { id: '2', name: 'Firm Admin 1', email: 'firm1@eloisedupont.com', role: 'firmadmin', firmId: '101', firmName: 'Finance Pro Inc.' },
-  { id: '3', name: 'Broker 1', email: 'broker1@eloisedupont.com', role: 'broker', firmId: '101', firmName: 'Finance Pro Inc.' },
+  { id: '1', name: 'Super Admin', email: 'super@eloisedupont.com', role: 'SuperAdmin' },
+  { id: '2', name: 'Firm Admin 1', email: 'firm1@eloisedupont.com', role: 'Admin', firmId: '101', firmName: 'Finance Pro Inc.' },
+  { id: '3', name: 'Broker 1', email: 'broker1@eloisedupont.com', role: 'Broker', firmId: '101', firmName: 'Finance Pro Inc.' },
 ];
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -170,13 +170,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const redirectToDashboard = (role: UserRole) => {
     switch (role) {
-      case 'superadmin':
+      case 'SuperAdmin':
         navigate('/super-admin/dashboard');
         break;
-      case 'firmadmin':
+      case 'Admin':
         navigate('/firm-admin/dashboard');
         break;
-      case 'broker':
+      case 'Broker':
         navigate('/broker/dashboard');
         break;
       default:

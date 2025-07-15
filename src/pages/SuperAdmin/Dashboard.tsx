@@ -44,7 +44,7 @@ const SuperAdminDashboard = () => {
               title="Invite Firm Admin"
               description="Send an invitation to a firm admin to join the platform."
               triggerText="Invite Firm Admin"
-              role="superadmin"
+              role="SuperAdmin"
               firms={MOCK_FIRMS}
             />
             <Button 
@@ -157,7 +157,7 @@ const SuperAdminDashboard = () => {
                       title="Invite Firm Admin"
                       description={`Send an invitation to a firm admin for ${firm.name}.`}
                       triggerText="Invite Admin"
-                      role="superadmin"
+                      role="SuperAdmin"
                       firms={[firm]}
                       firmId={firm.id}
                     />

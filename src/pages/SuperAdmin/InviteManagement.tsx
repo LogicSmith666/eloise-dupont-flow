@@ -47,7 +47,7 @@ const InviteManagement = () => {
               title="Invite Firm Admin"
               description="Send an invitation to a firm admin to join the platform."
               triggerText="Invite Firm Admin"
-              role="superadmin"
+              role="SuperAdmin"
               firms={firms}
             />
             <Button 

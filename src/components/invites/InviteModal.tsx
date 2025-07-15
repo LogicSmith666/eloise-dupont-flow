@@ -16,7 +16,7 @@ interface InviteModalProps {
   title: string;
   description: string;
   triggerText: string;
-  role: 'superadmin' | 'firmadmin';
+  role: 'SuperAdmin' | 'Admin';
   firms?: Array<{ id: string; name: string }>;
   firmId?: string;
 }
