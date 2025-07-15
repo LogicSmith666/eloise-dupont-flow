@@ -49,7 +49,7 @@ const SuperAdminDashboard = () => {
             />
             <Button 
               variant="outline"
-              onClick={() => navigate('/admin/invites')}
+              onClick={() => navigate('/super-admin/invites')}
             >
               View All Invites
             </Button>
@@ -106,7 +106,7 @@ const SuperAdminDashboard = () => {
               <Button 
                 variant="link" 
                 className="p-0 h-auto text-xs text-muted-foreground"
-                onClick={() => navigate('/admin/invites')}
+                onClick={() => navigate('/super-admin/invites')}
               >
                 View all invites
               </Button>
@@ -149,7 +149,7 @@ const SuperAdminDashboard = () => {
                     <Button 
                       variant="outline" 
                       size="sm"
-                      onClick={() => navigate(`/admin/firms/${firm.id}`)}
+                      onClick={() => navigate(`/super-admin/firms/${firm.id}`)}
                     >
                       View Details
                     </Button>
@@ -167,7 +167,7 @@ const SuperAdminDashboard = () => {
             </div>
             
             <div className="flex justify-end">
-              <Button onClick={() => navigate('/admin/invites')}>
+              <Button onClick={() => navigate('/super-admin/invites')}>
                 Create New Firm
               </Button>
             </div>
