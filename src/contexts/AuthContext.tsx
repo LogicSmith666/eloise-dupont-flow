@@ -171,10 +171,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const redirectToDashboard = (role: UserRole) => {
     switch (role) {
       case 'superadmin':
-        navigate('/admin/dashboard');
+        navigate('/super-admin/dashboard');
         break;
       case 'firmadmin':
-        navigate('/firm/dashboard');
+        navigate('/firm-admin/dashboard');
         break;
       case 'broker':
         navigate('/broker/dashboard');

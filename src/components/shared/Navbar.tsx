@@ -12,10 +12,10 @@ const Navbar = () => {
 
     switch (user.role) {
       case 'superadmin':
-        navigate('/admin/dashboard');
+        navigate('/super-admin/dashboard');
         break;
       case 'firmadmin':
-        navigate('/firm/dashboard');
+        navigate('/firm-admin/dashboard');
         break;
       case 'broker':
         navigate('/broker/dashboard');

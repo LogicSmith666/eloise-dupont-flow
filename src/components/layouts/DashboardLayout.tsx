@@ -1,3 +1,4 @@
+
 import { ReactNode } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from "@/components/ui/sidebar";
@@ -21,16 +22,17 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     switch (user?.role) {
       case 'superadmin':
         return [
-          { label: 'Dashboard', icon: Layout, path: '/admin/dashboard' },
-          { label: 'Firms', icon: Users, path: '/admin/firms' },
-          { label: 'Settings', icon: Settings, path: '/admin/settings' },
+          { label: 'Dashboard', icon: Layout, path: '/super-admin/dashboard' },
+          { label: 'Firms', icon: Users, path: '/super-admin/firms' },
+          { label: 'Invites', icon: FileText, path: '/super-admin/invites' },
+          { label: 'Settings', icon: Settings, path: '/super-admin/settings' },
         ];
       case 'firmadmin':
         return [
-          { label: 'Dashboard', icon: Layout, path: '/firm/dashboard' },
-          { label: 'Brokers', icon: Users, path: '/firm/brokers' },
-          { label: 'Applications', icon: FileText, path: '/firm/applications' },
-          { label: 'Settings', icon: Settings, path: '/firm/settings' },
+          { label: 'Dashboard', icon: Layout, path: '/firm-admin/dashboard' },
+          { label: 'Brokers', icon: Users, path: '/firm-admin/brokers' },
+          { label: 'Applications', icon: FileText, path: '/firm-admin/applications' },
+          { label: 'Settings', icon: Settings, path: '/firm-admin/settings' },
         ];
       case 'broker':
         return [

@@ -20,9 +20,9 @@ const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
     // Redirect to appropriate dashboard based on role
     switch (user.role) {
       case 'superadmin':
-        return <Navigate to="/admin/dashboard" replace />;
+        return <Navigate to="/super-admin/dashboard" replace />;
       case 'firmadmin':
-        return <Navigate to="/firm/dashboard" replace />;
+        return <Navigate to="/firm-admin/dashboard" replace />;
       case 'broker':
         return <Navigate to="/broker/dashboard" replace />;
       default:
