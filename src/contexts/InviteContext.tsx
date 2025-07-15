@@ -1,20 +1,9 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { UserRole } from './AuthContext';
+import { Invite } from '@/types/invite';
 
-export interface Invite {
-  id: string;
-  email: string;
-  role: UserRole;
-  firmId?: string;
-  firmName?: string;
-  invitedBy: string;
-  invitedAt: string;
-  status: 'pending' | 'accepted' | 'expired';
-  expiresAt: string;
-}
-
-// Mock invites data
+// Mock invites data - updated to match the Invite interface from types
 const MOCK_INVITES: Invite[] = [
   {
     id: '1',
@@ -22,10 +11,8 @@ const MOCK_INVITES: Invite[] = [
     role: 'Admin',
     firmId: '105',
     firmName: 'New Finance Firm',
-    invitedBy: 'super@eloisedupont.com',
-    invitedAt: '2024-01-15T10:00:00Z',
     status: 'pending',
-    expiresAt: '2024-01-22T10:00:00Z',
+    createdAt: '2024-01-15T10:00:00Z',
   },
   {
     id: '2',
@@ -33,10 +20,8 @@ const MOCK_INVITES: Invite[] = [
     role: 'Broker',
     firmId: '101',
     firmName: 'Finance Pro Inc.',
-    invitedBy: 'firm1@eloisedupont.com',
-    invitedAt: '2024-01-14T14:30:00Z',
     status: 'pending',
-    expiresAt: '2024-01-21T14:30:00Z',
+    createdAt: '2024-01-14T14:30:00Z',
   },
   {
     id: '3',
@@ -44,27 +29,27 @@ const MOCK_INVITES: Invite[] = [
     role: 'Broker',
     firmId: '102',
     firmName: 'Capital Solutions LLC',
-    invitedBy: 'firm2@eloisedupont.com',
-    invitedAt: '2024-01-10T09:15:00Z',
     status: 'accepted',
-    expiresAt: '2024-01-17T09:15:00Z',
+    createdAt: '2024-01-10T09:15:00Z',
   },
   {
     id: '4',
-    email: 'expired@invite.com',
+    email: 'declined@invite.com',
     role: 'Broker',
     firmId: '103',
     firmName: 'Funding Experts Group',
-    invitedBy: 'firm3@eloisedupont.com',
-    invitedAt: '2024-01-05T16:45:00Z',
-    status: 'expired',
-    expiresAt: '2024-01-12T16:45:00Z',
+    status: 'declined',
+    createdAt: '2024-01-05T16:45:00Z',
   },
 ];
 
 interface InviteContextType {
   invites: Invite[];
-  createInvite: (invite: Omit<Invite, 'id' | 'invitedAt' | 'status' | 'expiresAt'>) => void;
+  loading: boolean;
+  sendInvite: (email: string, role: UserRole, firmId?: string) => Promise<void>;
+  resendInvite: (id: string) => Promise<void>;
+  cancelInvite: (id: string) => Promise<void>;
+  createInvite: (invite: Omit<Invite, 'id' | 'createdAt' | 'status'>) => void;
   updateInviteStatus: (id: string, status: Invite['status']) => void;
   deleteInvite: (id: string) => void;
   getInvitesByRole: (role: UserRole) => Invite[];
@@ -75,14 +60,61 @@ const InviteContext = createContext<InviteContextType | undefined>(undefined);
 
 export const InviteProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [invites, setInvites] = useState<Invite[]>(MOCK_INVITES);
+  const [loading, setLoading] = useState(false);
 
-  const createInvite = (inviteData: Omit<Invite, 'id' | 'invitedAt' | 'status' | 'expiresAt'>) => {
+  const sendInvite = async (email: string, role: UserRole, firmId?: string) => {
+    setLoading(true);
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      const firmName = firmId ? `Firm ${firmId}` : undefined;
+      
+      const newInvite: Invite = {
+        id: Date.now().toString(),
+        email,
+        role,
+        firmId,
+        firmName,
+        status: 'pending',
+        createdAt: new Date().toISOString(),
+      };
+      
+      setInvites(prev => [...prev, newInvite]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resendInvite = async (id: string) => {
+    setLoading(true);
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      // In a real app, this would resend the invite
+      console.log(`Resending invite ${id}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const cancelInvite = async (id: string) => {
+    setLoading(true);
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setInvites(prev => prev.filter(invite => invite.id !== id));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createInvite = (inviteData: Omit<Invite, 'id' | 'createdAt' | 'status'>) => {
     const newInvite: Invite = {
       ...inviteData,
       id: Date.now().toString(),
-      invitedAt: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
       status: 'pending',
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
     };
     
     setInvites(prev => [...prev, newInvite]);
@@ -109,6 +141,10 @@ export const InviteProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   return (
     <InviteContext.Provider value={{
       invites,
+      loading,
+      sendInvite,
+      resendInvite,
+      cancelInvite,
       createInvite,
       updateInviteStatus,
       deleteInvite,
