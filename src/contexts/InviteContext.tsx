@@ -1,73 +1,73 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { Invite } from '@/types/invite';
-import { toast } from '@/components/ui/use-toast';
-import { useAuth } from '@/contexts/AuthContext';
+import { UserRole } from './AuthContext';
 
-// Mock firms data needed for the context
-const MOCK_FIRMS = [
-  { id: '101', name: 'Finance Pro Inc.', brokers: 5, activeApplications: 24 },
-  { id: '102', name: 'Capital Solutions LLC', brokers: 3, activeApplications: 17 },
-  { id: '103', name: 'Funding Experts Group', brokers: 8, activeApplications: 32 },
-  { id: '104', name: 'Business Capital Partners', brokers: 4, activeApplications: 21 },
-];
+export interface Invite {
+  id: string;
+  email: string;
+  role: UserRole;
+  firmId?: string;
+  firmName?: string;
+  invitedBy: string;
+  invitedAt: string;
+  status: 'pending' | 'accepted' | 'expired';
+  expiresAt: string;
+}
 
-// Mock initial invites
+// Mock invites data
 const MOCK_INVITES: Invite[] = [
   {
-    id: 'inv1',
-    email: 'firmadmin1@example.com',
-    role: 'firmadmin',
-    status: 'accepted',
-    createdAt: '2023-05-10T10:00:00Z',
-    firmId: '101',
-    firmName: 'Finance Pro Inc.'
-  },
-  {
-    id: 'inv2',
-    email: 'firmadmin2@example.com',
-    role: 'firmadmin',
+    id: '1',
+    email: 'admin@newfirm.com',
+    role: 'Admin',
+    firmId: '105',
+    firmName: 'New Finance Firm',
+    invitedBy: 'super@eloisedupont.com',
+    invitedAt: '2024-01-15T10:00:00Z',
     status: 'pending',
-    createdAt: '2023-05-15T14:30:00Z',
-    firmId: '102',
-    firmName: 'Capital Solutions LLC'
+    expiresAt: '2024-01-22T10:00:00Z',
   },
   {
-    id: 'inv3',
-    email: 'broker1@example.com',
-    role: 'broker',
-    status: 'accepted',
-    createdAt: '2023-05-12T09:15:00Z',
+    id: '2',
+    email: 'broker@existingfirm.com',
+    role: 'Broker',
     firmId: '101',
-    firmName: 'Finance Pro Inc.'
-  },
-  {
-    id: 'inv4',
-    email: 'broker2@example.com',
-    role: 'broker',
-    status: 'declined',
-    createdAt: '2023-05-14T16:45:00Z',
-    firmId: '101',
-    firmName: 'Finance Pro Inc.'
-  },
-  {
-    id: 'inv5',
-    email: 'broker3@example.com',
-    role: 'broker',
+    firmName: 'Finance Pro Inc.',
+    invitedBy: 'firm1@eloisedupont.com',
+    invitedAt: '2024-01-14T14:30:00Z',
     status: 'pending',
-    createdAt: '2023-05-16T11:20:00Z',
+    expiresAt: '2024-01-21T14:30:00Z',
+  },
+  {
+    id: '3',
+    email: 'accepted@broker.com',
+    role: 'Broker',
     firmId: '102',
-    firmName: 'Capital Solutions LLC'
-  }
+    firmName: 'Capital Solutions LLC',
+    invitedBy: 'firm2@eloisedupont.com',
+    invitedAt: '2024-01-10T09:15:00Z',
+    status: 'accepted',
+    expiresAt: '2024-01-17T09:15:00Z',
+  },
+  {
+    id: '4',
+    email: 'expired@invite.com',
+    role: 'Broker',
+    firmId: '103',
+    firmName: 'Funding Experts Group',
+    invitedBy: 'firm3@eloisedupont.com',
+    invitedAt: '2024-01-05T16:45:00Z',
+    status: 'expired',
+    expiresAt: '2024-01-12T16:45:00Z',
+  },
 ];
 
 interface InviteContextType {
   invites: Invite[];
-  loading: boolean;
-  sendInvite: (email: string, role: 'firmadmin' | 'broker', firmId?: string) => Promise<void>;
-  resendInvite: (id: string) => Promise<void>;
-  cancelInvite: (id: string) => Promise<void>;
-  getFirmInvites: (firmId: string) => Invite[];
+  createInvite: (invite: Omit<Invite, 'id' | 'invitedAt' | 'status' | 'expiresAt'>) => void;
+  updateInviteStatus: (id: string, status: Invite['status']) => void;
+  deleteInvite: (id: string) => void;
+  getInvitesByRole: (role: UserRole) => Invite[];
   getAllInvites: () => Invite[];
 }
 
@@ -75,114 +75,31 @@ const InviteContext = createContext<InviteContextType | undefined>(undefined);
 
 export const InviteProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [invites, setInvites] = useState<Invite[]>(MOCK_INVITES);
-  const [loading, setLoading] = useState(false);
-  const { user } = useAuth();
 
-  const sendInvite = async (email: string, role: 'firmadmin' | 'broker', firmId?: string) => {
-    setLoading(true);
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Generate a new invite
-      const newInvite: Invite = {
-        id: `inv${Date.now()}`,
-        email,
-        role,
-        status: 'pending',
-        createdAt: new Date().toISOString(),
-        firmId: firmId || user?.firmId,
-        firmName: role === 'firmadmin' ? 
-          // If it's a firm admin invite from super admin, use the firm name from the firmId
-          MOCK_FIRMS.find(f => f.id === firmId)?.name : 
-          // If it's a broker invite from firm admin, use the user's firm name
-          user?.firmName
-      };
-      
-      setInvites(prev => [...prev, newInvite]);
-      
-      toast({
-        title: "Invite sent",
-        description: `Invitation has been sent to ${email}`,
-      });
-      
-      return;
-    } catch (error) {
-      console.error('Send invite error:', error);
-      toast({
-        variant: "destructive",
-        title: "Failed to send invite",
-        description: "An error occurred while sending the invitation",
-      });
-      throw error;
-    } finally {
-      setLoading(false);
-    }
+  const createInvite = (inviteData: Omit<Invite, 'id' | 'invitedAt' | 'status' | 'expiresAt'>) => {
+    const newInvite: Invite = {
+      ...inviteData,
+      id: Date.now().toString(),
+      invitedAt: new Date().toISOString(),
+      status: 'pending',
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
+    };
+    
+    setInvites(prev => [...prev, newInvite]);
   };
 
-  const resendInvite = async (id: string) => {
-    setLoading(true);
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Update the invite timestamp
-      setInvites(prev => prev.map(invite => 
-        invite.id === id ? { ...invite, createdAt: new Date().toISOString() } : invite
-      ));
-      
-      const invite = invites.find(inv => inv.id === id);
-      
-      toast({
-        title: "Invite resent",
-        description: `Invitation has been resent to ${invite?.email}`,
-      });
-      
-      return;
-    } catch (error) {
-      console.error('Resend invite error:', error);
-      toast({
-        variant: "destructive",
-        title: "Failed to resend invite",
-        description: "An error occurred while resending the invitation",
-      });
-      throw error;
-    } finally {
-      setLoading(false);
-    }
+  const updateInviteStatus = (id: string, status: Invite['status']) => {
+    setInvites(prev => prev.map(invite => 
+      invite.id === id ? { ...invite, status } : invite
+    ));
   };
 
-  const cancelInvite = async (id: string) => {
-    setLoading(true);
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Remove the invite
-      const invite = invites.find(inv => inv.id === id);
-      setInvites(prev => prev.filter(invite => invite.id !== id));
-      
-      toast({
-        title: "Invite cancelled",
-        description: `Invitation to ${invite?.email} has been cancelled`,
-      });
-      
-      return;
-    } catch (error) {
-      console.error('Cancel invite error:', error);
-      toast({
-        variant: "destructive",
-        title: "Failed to cancel invite",
-        description: "An error occurred while cancelling the invitation",
-      });
-      throw error;
-    } finally {
-      setLoading(false);
-    }
+  const deleteInvite = (id: string) => {
+    setInvites(prev => prev.filter(invite => invite.id !== id));
   };
 
-  const getFirmInvites = (firmId: string) => {
-    return invites.filter(invite => invite.firmId === firmId);
+  const getInvitesByRole = (role: UserRole) => {
+    return invites.filter(invite => invite.role === role);
   };
 
   const getAllInvites = () => {
@@ -192,11 +109,10 @@ export const InviteProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   return (
     <InviteContext.Provider value={{
       invites,
-      loading,
-      sendInvite,
-      resendInvite,
-      cancelInvite,
-      getFirmInvites,
+      createInvite,
+      updateInviteStatus,
+      deleteInvite,
+      getInvitesByRole,
       getAllInvites,
     }}>
       {children}

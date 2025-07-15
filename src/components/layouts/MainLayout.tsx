@@ -1,6 +1,5 @@
 
 import { ReactNode } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
 import Navbar from '@/components/shared/Navbar';
 import Footer from '@/components/shared/Footer';
 import { ThemeProvider } from '@/contexts/ThemeContext';
@@ -10,8 +9,6 @@ interface MainLayoutProps {
 }
 
 const MainLayout = ({ children }: MainLayoutProps) => {
-  const { isAuthenticated } = useAuth();
-  
   return (
     <ThemeProvider>
       <div className="flex flex-col min-h-screen">
