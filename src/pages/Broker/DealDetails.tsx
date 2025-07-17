@@ -126,6 +126,7 @@ const DealDetails = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
+        {/* Header section */}
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Button 
@@ -308,34 +309,36 @@ const DealDetails = () => {
                     )}
                   </div>
                 )}
+              </div>
 
-                {/* Show deposit months only when revenue type is 'separate' */}
-                {displayDeal?.formData.revenueType === 'separate' && (
-                  <>
-                    {[1, 2, 3, 4].map((month) => {
-                      const fieldName = `depositMonth${month}`;
-                      const value = displayDeal?.formData[fieldName];
-                      return (
-                        <div key={month}>
-                          <Label className="text-sm font-medium text-muted-foreground">Deposit Month {month}</Label>
-                          {isEditing ? (
-                            <Input
-                              value={value || ''}
-                              onChange={(e) => updateField(fieldName, e.target.value)}
-                              className="mt-1"
-                              placeholder="Enter amount"
-                            />
-                          ) : (
-                            <p className="text-base mt-1">
-                              {value ? `$${parseInt(value).toLocaleString()}` : 'Not specified'}
-                            </p>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </>
-                )}
+              {/* Show deposit months only when revenue type is 'separate' */}
+              {displayDeal?.formData.revenueType === 'separate' && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+                  {[1, 2, 3, 4].map((month) => {
+                    const fieldName = `depositMonth${month}`;
+                    const value = displayDeal?.formData[fieldName];
+                    return (
+                      <div key={month}>
+                        <Label className="text-sm font-medium text-muted-foreground">Deposit Month {month}</Label>
+                        {isEditing ? (
+                          <Input
+                            value={value || ''}
+                            onChange={(e) => updateField(fieldName, e.target.value)}
+                            className="mt-1"
+                            placeholder="Enter amount"
+                          />
+                        ) : (
+                          <p className="text-base mt-1">
+                            {value ? `$${parseInt(value).toLocaleString()}` : 'Not specified'}
+                          </p>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
 
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
                 <div>
                   <Label className="text-sm font-medium text-muted-foreground">FICO Score</Label>
                   {isEditing ? (
