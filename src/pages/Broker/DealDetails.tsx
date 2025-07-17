@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft, Edit, Trash2, Save, X } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -19,6 +20,26 @@ interface Deal {
   date: string;
   formData: any;
 }
+
+const US_STATES = [
+  'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware',
+  'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky',
+  'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi',
+  'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico',
+  'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania',
+  'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont',
+  'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
+];
+
+const ENTITY_TYPES = [
+  'LLC', 'Corporation', 'Partnership', 'Sole Proprietorship', 'S-Corp', 'C-Corp', 'LLP', 'Non-Profit'
+];
+
+const INDUSTRIES = [
+  'Restaurant', 'Retail', 'Construction', 'Healthcare', 'Technology', 'Manufacturing', 'Real Estate',
+  'Transportation', 'Professional Services', 'Education', 'Entertainment', 'Agriculture', 'Finance',
+  'Insurance', 'Energy', 'Telecommunications', 'Media', 'Tourism', 'Automotive', 'Other'
+];
 
 const DealDetails = () => {
   const { id } = useParams();
@@ -190,11 +211,18 @@ const DealDetails = () => {
                 <div>
                   <Label className="text-sm font-medium text-muted-foreground">State</Label>
                   {isEditing ? (
-                    <Input
-                      value={displayDeal?.formData.state || ''}
-                      onChange={(e) => updateField('state', e.target.value)}
-                      className="mt-1"
-                    />
+                    <Select value={displayDeal?.formData.state || ''} onValueChange={(value) => updateField('state', value)}>
+                      <SelectTrigger className="mt-1">
+                        <SelectValue placeholder="Select state" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {US_STATES.map((state) => (
+                          <SelectItem key={state} value={state}>
+                            {state}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   ) : (
                     <p className="text-base mt-1">{displayDeal?.formData.state}</p>
                   )}
@@ -215,11 +243,18 @@ const DealDetails = () => {
                 <div>
                   <Label className="text-sm font-medium text-muted-foreground">Entity Type</Label>
                   {isEditing ? (
-                    <Input
-                      value={displayDeal?.formData.entityType || ''}
-                      onChange={(e) => updateField('entityType', e.target.value)}
-                      className="mt-1"
-                    />
+                    <Select value={displayDeal?.formData.entityType || ''} onValueChange={(value) => updateField('entityType', value)}>
+                      <SelectTrigger className="mt-1">
+                        <SelectValue placeholder="Select entity type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {ENTITY_TYPES.map((type) => (
+                          <SelectItem key={type} value={type}>
+                            {type}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   ) : (
                     <p className="text-base mt-1">{displayDeal?.formData.entityType}</p>
                   )}
@@ -237,11 +272,23 @@ const DealDetails = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
                   <Label className="text-sm font-medium text-muted-foreground">Revenue Type</Label>
-                  <p className="text-base mt-1">{displayDeal?.formData.revenueType}</p>
+                  {isEditing ? (
+                    <Select value={displayDeal?.formData.revenueType || ''} onValueChange={(value) => updateField('revenueType', value)}>
+                      <SelectTrigger className="mt-1">
+                        <SelectValue placeholder="Select revenue type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="average">Average</SelectItem>
+                        <SelectItem value="separate">Separate</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <p className="text-base mt-1 capitalize">{displayDeal?.formData.revenueType}</p>
+                  )}
                 </div>
                 
                 {/* Show monthly revenue average only when revenue type is 'average' */}
-                {displayDeal?.formData.revenueType === 'average' && displayDeal?.formData.monthlyRevenueAvg && (
+                {displayDeal?.formData.revenueType === 'average' && (
                   <div>
                     <Label className="text-sm font-medium text-muted-foreground">Monthly Revenue Average</Label>
                     {isEditing ? (
@@ -249,9 +296,15 @@ const DealDetails = () => {
                         value={displayDeal?.formData.monthlyRevenueAvg || ''}
                         onChange={(e) => updateField('monthlyRevenueAvg', e.target.value)}
                         className="mt-1"
+                        placeholder="Enter amount"
                       />
                     ) : (
-                      <p className="text-base mt-1">${parseInt(displayDeal?.formData.monthlyRevenueAvg).toLocaleString()}</p>
+                      <p className="text-base mt-1">
+                        {displayDeal?.formData.monthlyRevenueAvg ? 
+                          `$${parseInt(displayDeal?.formData.monthlyRevenueAvg).toLocaleString()}` : 
+                          'Not specified'
+                        }
+                      </p>
                     )}
                   </div>
                 )}
@@ -262,23 +315,23 @@ const DealDetails = () => {
                     {[1, 2, 3, 4].map((month) => {
                       const fieldName = `depositMonth${month}`;
                       const value = displayDeal?.formData[fieldName];
-                      if (value) {
-                        return (
-                          <div key={month}>
-                            <Label className="text-sm font-medium text-muted-foreground">Deposit Month {month}</Label>
-                            {isEditing ? (
-                              <Input
-                                value={value}
-                                onChange={(e) => updateField(fieldName, e.target.value)}
-                                className="mt-1"
-                              />
-                            ) : (
-                              <p className="text-base mt-1">${parseInt(value).toLocaleString()}</p>
-                            )}
-                          </div>
-                        );
-                      }
-                      return null;
+                      return (
+                        <div key={month}>
+                          <Label className="text-sm font-medium text-muted-foreground">Deposit Month {month}</Label>
+                          {isEditing ? (
+                            <Input
+                              value={value || ''}
+                              onChange={(e) => updateField(fieldName, e.target.value)}
+                              className="mt-1"
+                              placeholder="Enter amount"
+                            />
+                          ) : (
+                            <p className="text-base mt-1">
+                              {value ? `$${parseInt(value).toLocaleString()}` : 'Not specified'}
+                            </p>
+                          )}
+                        </div>
+                      );
                     })}
                   </>
                 )}
@@ -322,11 +375,18 @@ const DealDetails = () => {
                 <div>
                   <Label className="text-sm font-medium text-muted-foreground">Industry</Label>
                   {isEditing ? (
-                    <Input
-                      value={displayDeal?.formData.rawIndustry || ''}
-                      onChange={(e) => updateField('rawIndustry', e.target.value)}
-                      className="mt-1"
-                    />
+                    <Select value={displayDeal?.formData.rawIndustry || ''} onValueChange={(value) => updateField('rawIndustry', value)}>
+                      <SelectTrigger className="mt-1">
+                        <SelectValue placeholder="Select industry" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {INDUSTRIES.map((industry) => (
+                          <SelectItem key={industry} value={industry}>
+                            {industry}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   ) : (
                     <p className="text-base mt-1">{displayDeal?.formData.rawIndustry}</p>
                   )}
@@ -344,12 +404,36 @@ const DealDetails = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label className="text-sm font-medium text-muted-foreground">Has Defaults/BKs</Label>
-                  <p className="text-base mt-1 capitalize">{displayDeal?.formData.hasDefaults}</p>
+                  {isEditing ? (
+                    <Select value={displayDeal?.formData.hasDefaults || ''} onValueChange={(value) => updateField('hasDefaults', value)}>
+                      <SelectTrigger className="mt-1">
+                        <SelectValue placeholder="Select option" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="yes">Yes</SelectItem>
+                        <SelectItem value="no">No</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <p className="text-base mt-1 capitalize">{displayDeal?.formData.hasDefaults}</p>
+                  )}
                 </div>
-                {displayDeal?.formData.defaultsSettled && (
+                {(displayDeal?.formData.hasDefaults === 'yes' || displayDeal?.formData.defaultsSettled) && (
                   <div>
                     <Label className="text-sm font-medium text-muted-foreground">Defaults Settled</Label>
-                    <p className="text-base mt-1 capitalize">{displayDeal?.formData.defaultsSettled}</p>
+                    {isEditing ? (
+                      <Select value={displayDeal?.formData.defaultsSettled || ''} onValueChange={(value) => updateField('defaultsSettled', value)}>
+                        <SelectTrigger className="mt-1">
+                          <SelectValue placeholder="Select option" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="yes">Yes</SelectItem>
+                          <SelectItem value="no">No</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <p className="text-base mt-1 capitalize">{displayDeal?.formData.defaultsSettled}</p>
+                    )}
                   </div>
                 )}
               </div>
