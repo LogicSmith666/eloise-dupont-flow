@@ -8,8 +8,8 @@ import { Input } from "@/components/ui/input";
 import InviteModal from "@/components/invites/InviteModal";
 import { useInvite } from "@/contexts/InviteContext";
 
-// Mock data for brokers
-const MOCK_BROKERS = [
+// Mock data for processors
+const MOCK_PROCESSORS = [
   { id: '1', name: 'John Smith', email: 'john.smith@firmadmin.com', status: 'Active', applications: 12 },
   { id: '2', name: 'Sarah Johnson', email: 'sarah.johnson@firmadmin.com', status: 'Active', applications: 8 },
   { id: '3', name: 'Mike Wilson', email: 'mike.wilson@firmadmin.com', status: 'Inactive', applications: 3 },
@@ -20,33 +20,33 @@ const MOCK_FIRM = {
   name: 'Finance Pro Inc.'
 };
 
-const FirmAdminBrokerManagement = () => {
+const FirmAdminProcessorManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const { getAllInvites } = useInvite();
   
-  const filteredBrokers = MOCK_BROKERS.filter(broker => 
-    broker.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    broker.email.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredProcessors = MOCK_PROCESSORS.filter(processor => 
+    processor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    processor.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
   
   const allInvites = getAllInvites();
-  const brokerInvites = allInvites.filter(invite => invite.role === 'Broker');
-  const pendingBrokerInvites = brokerInvites.filter(invite => invite.status === 'pending');
+  const processorInvites = allInvites.filter(invite => invite.role === 'Processor');
+  const pendingProcessorInvites = processorInvites.filter(invite => invite.status === 'pending');
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Broker Management</h1>
+            <h1 className="text-3xl font-bold tracking-tight">Processor Management</h1>
             <p className="text-muted-foreground">
-              Manage brokers in your firm and track their performance.
+              Manage processors in your firm and track their performance.
             </p>
           </div>
           <InviteModal
-            title="Invite Broker"
-            description="Send an invitation to a broker to join your firm."
-            triggerText="Invite Broker"
+            title="Invite Processor"
+            description="Send an invitation to a processor to join your firm."
+            triggerText="Invite Processor"
             role="Admin"
             firms={[MOCK_FIRM]}
             firmId={MOCK_FIRM.id}
@@ -56,10 +56,10 @@ const FirmAdminBrokerManagement = () => {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Total Brokers</CardTitle>
+              <CardTitle className="text-sm font-medium">Total Processors</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">{MOCK_BROKERS.length}</div>
+              <div className="text-3xl font-bold">{MOCK_PROCESSORS.length}</div>
               <p className="text-xs text-muted-foreground mt-1">
                 +2 from last month
               </p>
@@ -68,11 +68,11 @@ const FirmAdminBrokerManagement = () => {
           
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Active Brokers</CardTitle>
+              <CardTitle className="text-sm font-medium">Active Processors</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">
-                {MOCK_BROKERS.filter(b => b.status === 'Active').length}
+                {MOCK_PROCESSORS.filter(b => b.status === 'Active').length}
               </div>
               <p className="text-xs text-muted-foreground mt-1">
                 85% active rate
@@ -86,7 +86,7 @@ const FirmAdminBrokerManagement = () => {
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">
-                {MOCK_BROKERS.reduce((acc, broker) => acc + broker.applications, 0)}
+                {MOCK_PROCESSORS.reduce((acc, processor) => acc + processor.applications, 0)}
               </div>
               <p className="text-xs text-muted-foreground mt-1">
                 +8 from last month
@@ -99,9 +99,9 @@ const FirmAdminBrokerManagement = () => {
               <CardTitle className="text-sm font-medium">Pending Invites</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">{pendingBrokerInvites.length}</div>
+              <div className="text-3xl font-bold">{pendingProcessorInvites.length}</div>
               <p className="text-xs text-muted-foreground mt-1">
-                Broker invitations
+                Processor invitations
               </p>
             </CardContent>
           </Card>
@@ -109,14 +109,14 @@ const FirmAdminBrokerManagement = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Brokers</CardTitle>
-            <CardDescription>Manage brokers in your firm.</CardDescription>
+            <CardTitle>Processors</CardTitle>
+            <CardDescription>Manage processors in your firm.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="relative">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search brokers..."
+                placeholder="Search processors..."
                 className="pl-8"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -131,23 +131,23 @@ const FirmAdminBrokerManagement = () => {
                 <div>Applications</div>
                 <div className="text-right">Actions</div>
               </div>
-              {filteredBrokers.map((broker) => (
+              {filteredProcessors.map((processor) => (
                 <div 
-                  key={broker.id} 
+                  key={processor.id} 
                   className="grid grid-cols-5 p-4 hover:bg-muted border-t items-center"
                 >
-                  <div className="font-medium">{broker.name}</div>
-                  <div className="text-muted-foreground">{broker.email}</div>
+                  <div className="font-medium">{processor.name}</div>
+                  <div className="text-muted-foreground">{processor.email}</div>
                   <div>
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      broker.status === 'Active' 
+                      processor.status === 'Active' 
                         ? 'bg-green-100 text-green-800' 
                         : 'bg-gray-100 text-gray-800'
                     }`}>
-                      {broker.status}
+                      {processor.status}
                     </span>
                   </div>
-                  <div>{broker.applications}</div>
+                  <div>{processor.applications}</div>
                   <div className="text-right space-x-2">
                     <Button variant="outline" size="sm">
                       View Details
@@ -166,4 +166,4 @@ const FirmAdminBrokerManagement = () => {
   );
 };
 
-export default FirmAdminBrokerManagement;
+export default FirmAdminProcessorManagement;

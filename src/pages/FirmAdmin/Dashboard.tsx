@@ -9,7 +9,7 @@ import InviteModal from "@/components/invites/InviteModal";
 import { useInvite } from "@/contexts/InviteContext";
 
 // Mock data for dashboard
-const MOCK_BROKERS = [
+const MOCK_PROCESSORS = [
   { id: '1', name: 'John Smith', email: 'john.smith@firmadmin.com', applications: 12, status: 'Active' },
   { id: '2', name: 'Sarah Johnson', email: 'sarah.johnson@firmadmin.com', applications: 8, status: 'Active' },
   { id: '3', name: 'Mike Wilson', email: 'mike.wilson@firmadmin.com', applications: 3, status: 'Inactive' },
@@ -24,13 +24,13 @@ const FirmAdminDashboard = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const { getAllInvites } = useInvite();
   
-  const filteredBrokers = MOCK_BROKERS.filter(broker => 
-    broker.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredProcessors = MOCK_PROCESSORS.filter(processor => 
+    processor.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
   
   const allInvites = getAllInvites();
-  const brokerInvites = allInvites.filter(invite => invite.role === 'Broker');
-  const pendingBrokerInvites = brokerInvites.filter(invite => invite.status === 'pending');
+  const processorInvites = allInvites.filter(invite => invite.role === 'Processor');
+  const pendingProcessorInvites = processorInvites.filter(invite => invite.status === 'pending');
 
   return (
     <DashboardLayout>
@@ -39,13 +39,13 @@ const FirmAdminDashboard = () => {
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Firm Admin Dashboard</h1>
             <p className="text-muted-foreground">
-              Overview of your firm's brokers and applications.
+              Overview of your firm's processors and applications.
             </p>
           </div>
           <InviteModal
-            title="Invite Broker"
-            description="Send an invitation to a broker to join your firm."
-            triggerText="Invite Broker"
+            title="Invite Processor"
+            description="Send an invitation to a processor to join your firm."
+            triggerText="Invite Processor"
             role="Admin"
             firms={[MOCK_FIRM]}
             firmId={MOCK_FIRM.id}
@@ -55,10 +55,10 @@ const FirmAdminDashboard = () => {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Total Brokers</CardTitle>
+              <CardTitle className="text-sm font-medium">Total Processors</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">{MOCK_BROKERS.length}</div>
+              <div className="text-3xl font-bold">{MOCK_PROCESSORS.length}</div>
               <p className="text-xs text-muted-foreground mt-1">
                 +2 from last month
               </p>
@@ -71,7 +71,7 @@ const FirmAdminDashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">
-                {MOCK_BROKERS.reduce((acc, broker) => acc + broker.applications, 0)}
+                {MOCK_PROCESSORS.reduce((acc, processor) => acc + processor.applications, 0)}
               </div>
               <p className="text-xs text-muted-foreground mt-1">
                 +8 from last month
@@ -81,11 +81,11 @@ const FirmAdminDashboard = () => {
           
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Active Brokers</CardTitle>
+              <CardTitle className="text-sm font-medium">Active Processors</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">
-                {MOCK_BROKERS.filter(b => b.status === 'Active').length}
+                {MOCK_PROCESSORS.filter(b => b.status === 'Active').length}
               </div>
               <p className="text-xs text-muted-foreground mt-1">
                 85% active rate
@@ -98,9 +98,9 @@ const FirmAdminDashboard = () => {
               <CardTitle className="text-sm font-medium">Pending Invites</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">{pendingBrokerInvites.length}</div>
+              <div className="text-3xl font-bold">{pendingProcessorInvites.length}</div>
               <p className="text-xs text-muted-foreground mt-1">
-                Broker invitations
+                Processor invitations
               </p>
             </CardContent>
           </Card>
@@ -108,14 +108,14 @@ const FirmAdminDashboard = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Recent Brokers</CardTitle>
-            <CardDescription>Overview of brokers in your firm.</CardDescription>
+            <CardTitle>Recent Processors</CardTitle>
+            <CardDescription>Overview of processors in your firm.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="relative">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search brokers..."
+                placeholder="Search processors..."
                 className="pl-8"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -129,20 +129,20 @@ const FirmAdminDashboard = () => {
                 <div>Status</div>
                 <div className="text-right">Actions</div>
               </div>
-              {filteredBrokers.map((broker) => (
+              {filteredProcessors.map((processor) => (
                 <div 
-                  key={broker.id} 
+                  key={processor.id} 
                   className="grid grid-cols-4 p-4 hover:bg-muted border-t items-center"
                 >
-                  <div className="font-medium">{broker.name}</div>
-                  <div>{broker.applications}</div>
+                  <div className="font-medium">{processor.name}</div>
+                  <div>{processor.applications}</div>
                   <div>
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      broker.status === 'Active' 
+                      processor.status === 'Active' 
                         ? 'bg-green-100 text-green-800' 
                         : 'bg-gray-100 text-gray-800'
                     }`}>
-                      {broker.status}
+                      {processor.status}
                     </span>
                   </div>
                   <div className="text-right space-x-2">
@@ -150,8 +150,8 @@ const FirmAdminDashboard = () => {
                       View Details
                     </Button>
                     <InviteModal
-                      title="Invite Broker"
-                      description="Send an invitation to a broker to join your firm."
+                      title="Invite Processor"
+                      description="Send an invitation to a processor to join your firm."
                       triggerText="Invite"
                       role="Admin"
                       firms={[MOCK_FIRM]}
@@ -163,8 +163,8 @@ const FirmAdminDashboard = () => {
             </div>
             
             <div className="flex justify-end">
-              <Button onClick={() => window.location.href = '/firm-admin/brokers'}>
-                Manage All Brokers
+              <Button onClick={() => window.location.href = '/firm-admin/processors'}>
+                Manage All Processors
               </Button>
             </div>
           </CardContent>
