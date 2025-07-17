@@ -31,8 +31,8 @@ const InviteForm = ({ role, firms, firmId, onComplete }: InviteFormProps) => {
   const handleSendInvite = async () => {
     if (!email) return;
     
-    // For firm admin sending to broker, we already have the firmId
-    const targetRole: UserRole = role === 'SuperAdmin' ? 'Admin' : 'Broker';
+    // For firm admin sending to processor, we already have the firmId
+    const targetRole: UserRole = role === 'SuperAdmin' ? 'Admin' : 'Processor';
     const targetFirmId = role === 'SuperAdmin' ? selectedFirmId : firmId;
     
     setIsSending(true);
@@ -53,7 +53,7 @@ const InviteForm = ({ role, firms, firmId, onComplete }: InviteFormProps) => {
     <Card className="w-full">
       <CardHeader>
         <CardTitle>
-          {role === 'SuperAdmin' ? 'Invite Firm Admin' : 'Invite Broker'}
+          {role === 'SuperAdmin' ? 'Invite Firm Admin' : 'Invite Processor'}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">

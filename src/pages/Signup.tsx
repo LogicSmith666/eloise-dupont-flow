@@ -14,7 +14,7 @@ const Signup = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState<UserRole>('Broker');
+  const [role, setRole] = useState<UserRole>('Processor');
   const [firmId, setFirmId] = useState('');
   const { signup, loading } = useAuth();
 
@@ -74,7 +74,7 @@ const Signup = () => {
                     <SelectValue placeholder="Select your role" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Broker">Broker</SelectItem>
+                    <SelectItem value="Processor">Processor</SelectItem>
                     <SelectItem value="Admin">Firm Admin</SelectItem>
                   </SelectContent>
                 </Select>

@@ -17,8 +17,8 @@ const Navbar = () => {
       case 'Admin':
         navigate('/firm-admin/dashboard');
         break;
-      case 'Broker':
-        navigate('/broker/dashboard');
+      case 'Processor':
+        navigate('/processor/dashboard');
         break;
       default:
         navigate('/');

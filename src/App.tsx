@@ -18,8 +18,8 @@ import SuperAdminDashboard from './pages/SuperAdmin/Dashboard';
 import SuperAdminFirmDetails from './pages/SuperAdmin/FirmDetails';
 import SuperAdminInviteManagement from './pages/SuperAdmin/InviteManagement';
 import FirmAdminDashboard from './pages/FirmAdmin/Dashboard';
-import FirmAdminBrokerManagement from './pages/FirmAdmin/BrokerManagement';
-import BrokerDashboard from './pages/Broker/Dashboard';
+import FirmAdminProcessorManagement from './pages/FirmAdmin/ProcessorManagement';
+import ProcessorDashboard from './pages/Processor/Dashboard';
 import BrokerUploadDocuments from './pages/Broker/UploadDocuments';
 import BrokerCreateDealForm from './pages/Broker/CreateDealForm';
 import BrokerBusinessProfiles from './pages/Broker/BusinessProfiles';
@@ -76,59 +76,59 @@ function App() {
                   } 
                 />
                 <Route 
-                  path="/firm-admin/brokers" 
+                  path="/firm-admin/processors" 
                   element={
                     <ProtectedRoute allowedRoles={['Admin']}>
-                      <FirmAdminBrokerManagement />
+                      <FirmAdminProcessorManagement />
                     </ProtectedRoute>
                   } 
                 />
 
-                {/* Broker routes */}
+                {/* Processor routes */}
                 <Route 
-                  path="/broker/dashboard" 
+                  path="/processor/dashboard" 
                   element={
-                    <ProtectedRoute allowedRoles={['Broker']}>
-                      <BrokerDashboard />
+                    <ProtectedRoute allowedRoles={['Processor']}>
+                      <ProcessorDashboard />
                     </ProtectedRoute>
                   } 
                 />
                 <Route 
-                  path="/broker/upload" 
+                  path="/processor/upload" 
                   element={
-                    <ProtectedRoute allowedRoles={['Broker']}>
+                    <ProtectedRoute allowedRoles={['Processor']}>
                       <BrokerUploadDocuments />
                     </ProtectedRoute>
                   } 
                 />
                 <Route 
-                  path="/broker/create-deal-form" 
+                  path="/processor/create-deal-form" 
                   element={
-                    <ProtectedRoute allowedRoles={['Broker']}>
+                    <ProtectedRoute allowedRoles={['Processor']}>
                       <BrokerCreateDealForm />
                     </ProtectedRoute>
                   } 
                 />
                 <Route 
-                  path="/broker/business-profiles" 
+                  path="/processor/business-profiles" 
                   element={
-                    <ProtectedRoute allowedRoles={['Broker']}>
+                    <ProtectedRoute allowedRoles={['Processor']}>
                       <BrokerBusinessProfiles />
                     </ProtectedRoute>
                   } 
                 />
                 <Route 
-                  path="/broker/applications/:id" 
+                  path="/processor/applications/:id" 
                   element={
-                    <ProtectedRoute allowedRoles={['Broker']}>
+                    <ProtectedRoute allowedRoles={['Processor']}>
                       <BrokerBusinessOwnerDetails />
                     </ProtectedRoute>
                   } 
                 />
                 <Route 
-                  path="/broker/deals/:id" 
+                  path="/processor/deals/:id" 
                   element={
-                    <ProtectedRoute allowedRoles={['Broker']}>
+                    <ProtectedRoute allowedRoles={['Processor']}>
                       <BrokerDealDetails />
                     </ProtectedRoute>
                   } 

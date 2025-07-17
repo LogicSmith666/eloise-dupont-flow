@@ -30,17 +30,17 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       case 'Admin':
         return [
           { label: 'Dashboard', icon: Layout, path: '/firm-admin/dashboard' },
-          { label: 'Brokers', icon: Users, path: '/firm-admin/brokers' },
+          { label: 'Processors', icon: Users, path: '/firm-admin/processors' },
           { label: 'Applications', icon: FileText, path: '/firm-admin/applications' },
           { label: 'Settings', icon: Settings, path: '/firm-admin/settings' },
         ];
-      case 'Broker':
+      case 'Processor':
         return [
-          { label: 'Dashboard', icon: Layout, path: '/broker/dashboard' },
-          { label: 'Business Profiles', icon: Building, path: '/broker/business-profiles' },
-          { label: 'Upload Documents', icon: Upload, path: '/broker/upload' },
-          { label: 'Applications', icon: FileText, path: '/broker/applications' },
-          { label: 'Settings', icon: Settings, path: '/broker/settings' },
+          { label: 'Dashboard', icon: Layout, path: '/processor/dashboard' },
+          { label: 'Business Profiles', icon: Building, path: '/processor/business-profiles' },
+          { label: 'Upload Documents', icon: Upload, path: '/processor/upload' },
+          { label: 'Applications', icon: FileText, path: '/processor/applications' },
+          { label: 'Settings', icon: Settings, path: '/processor/settings' },
         ];
       default:
         return [];

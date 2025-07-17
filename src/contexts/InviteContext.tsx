@@ -16,8 +16,8 @@ const MOCK_INVITES: Invite[] = [
   },
   {
     id: '2',
-    email: 'broker@existingfirm.com',
-    role: 'Broker',
+    email: 'processor@existingfirm.com',
+    role: 'Processor',
     firmId: '101',
     firmName: 'Finance Pro Inc.',
     status: 'pending',
@@ -25,8 +25,8 @@ const MOCK_INVITES: Invite[] = [
   },
   {
     id: '3',
-    email: 'accepted@broker.com',
-    role: 'Broker',
+    email: 'accepted@processor.com',
+    role: 'Processor',
     firmId: '102',
     firmName: 'Capital Solutions LLC',
     status: 'accepted',
@@ -35,7 +35,7 @@ const MOCK_INVITES: Invite[] = [
   {
     id: '4',
     email: 'declined@invite.com',
-    role: 'Broker',
+    role: 'Processor',
     firmId: '103',
     firmName: 'Funding Experts Group',
     status: 'declined',
