@@ -289,7 +289,7 @@ const DealDetails = () => {
                 </div>
                 
                 {/* Show monthly revenue average only when revenue type is 'average' */}
-                {displayDeal?.formData.revenueType === 'average' && (
+                {(displayDeal?.formData.revenueType === 'average' || displayDeal?.formData.revenueType === 'Average') && (
                   <div>
                     <Label className="text-sm font-medium text-muted-foreground">Monthly Revenue Average</Label>
                     {isEditing ? (
@@ -312,7 +312,7 @@ const DealDetails = () => {
               </div>
 
               {/* Show deposit months only when revenue type is 'separate' */}
-              {displayDeal?.formData.revenueType === 'separate' && (
+              {(displayDeal?.formData.revenueType === 'separate' || displayDeal?.formData.revenueType === 'Separate') && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
                   {[1, 2, 3, 4].map((month) => {
                     const fieldName = `depositMonth${month}`;
