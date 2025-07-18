@@ -41,6 +41,20 @@ const INDUSTRIES = [
   'Insurance', 'Energy', 'Telecommunications', 'Media', 'Tourism', 'Automotive', 'Other'
 ];
 
+// Mock business profiles for dropdown
+const MOCK_BUSINESS_PROFILES = [
+  'Cozy Coffee Shop',
+  'Urban Fitness Center', 
+  'Fresh Grocery Market',
+  'Tech Solutions Inc.',
+  'Green Energy Corp',
+  'Downtown Restaurant',
+  'Medical Clinic',
+  'Auto Repair Shop',
+  'Consulting Services',
+  'Retail Store'
+];
+
 const DealDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -200,11 +214,18 @@ const DealDetails = () => {
                 <div>
                   <Label className="text-sm font-medium text-muted-foreground">Business Name</Label>
                   {isEditing ? (
-                    <Input
-                      value={displayDeal?.formData.businessName || ''}
-                      onChange={(e) => updateField('businessName', e.target.value)}
-                      className="mt-1"
-                    />
+                    <Select value={displayDeal?.formData.businessName || ''} onValueChange={(value) => updateField('businessName', value)}>
+                      <SelectTrigger className="mt-1">
+                        <SelectValue placeholder="Select business name" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {MOCK_BUSINESS_PROFILES.map((businessName) => (
+                          <SelectItem key={businessName} value={businessName}>
+                            {businessName}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   ) : (
                     <p className="text-base mt-1">{displayDeal?.formData.businessName}</p>
                   )}
