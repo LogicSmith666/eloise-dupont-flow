@@ -17,6 +17,7 @@ import NotFound from './pages/NotFound';
 import SuperAdminDashboard from './pages/SuperAdmin/Dashboard';
 import SuperAdminFirmDetails from './pages/SuperAdmin/FirmDetails';
 import SuperAdminInviteManagement from './pages/SuperAdmin/InviteManagement';
+import CreateLender from './pages/SuperAdmin/CreateLender';
 import FirmAdminDashboard from './pages/FirmAdmin/Dashboard';
 import FirmAdminProcessorManagement from './pages/FirmAdmin/ProcessorManagement';
 import ProcessorDashboard from './pages/Processor/Dashboard';
@@ -62,6 +63,14 @@ function App() {
                   element={
                     <ProtectedRoute allowedRoles={['SuperAdmin']}>
                       <SuperAdminInviteManagement />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/super-admin/create-lender" 
+                  element={
+                    <ProtectedRoute allowedRoles={['SuperAdmin']}>
+                      <CreateLender />
                     </ProtectedRoute>
                   } 
                 />

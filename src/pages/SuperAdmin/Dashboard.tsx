@@ -166,7 +166,13 @@ const SuperAdminDashboard = () => {
               ))}
             </div>
             
-            <div className="flex justify-end">
+            <div className="flex justify-end space-x-4">
+              <Button 
+                variant="outline" 
+                onClick={() => navigate('/super-admin/create-lender')}
+              >
+                Create Lender
+              </Button>
               <Button onClick={() => navigate('/super-admin/invites')}>
                 Create New Firm
               </Button>
