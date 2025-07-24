@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import LenderTypeConfigurationComponent, { LenderTypeConfiguration } from "./LenderTypeConfiguration";
@@ -30,15 +30,22 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-const LenderForm = () => {
+interface LenderFormProps {
+  initialData?: any;
+  isEditing?: boolean;
+}
+
+const LenderForm = ({ initialData, isEditing = false }: LenderFormProps) => {
   const { toast } = useToast();
-  const [lenderTypeConfigs, setLenderTypeConfigs] = useState<LenderTypeConfiguration[]>([]);
+  const [lenderTypeConfigs, setLenderTypeConfigs] = useState<LenderTypeConfiguration[]>(
+    initialData?.configurations || []
+  );
   
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      lenderName: "",
-      status: "active",
+      lenderName: initialData?.name || "",
+      status: initialData?.status || "active",
     },
   });
 
@@ -110,8 +117,8 @@ const LenderForm = () => {
     
     console.log("Lender Data:", lenderData);
     toast({
-      title: "Lender Created",
-      description: `${data.lenderName} has been successfully created with ${lenderTypeConfigs.length} type configuration(s).`,
+      title: "Success",
+      description: isEditing ? "Lender updated successfully!" : "Lender created successfully!",
     });
     
     // Reset form
@@ -123,7 +130,10 @@ const LenderForm = () => {
     <div className="max-w-6xl mx-auto space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Create New Lender</CardTitle>
+          <CardTitle>{isEditing ? 'Edit Lender' : 'Create New Lender'}</CardTitle>
+          <CardDescription>
+            {isEditing ? 'Update lender information and configurations.' : 'Add a new lender with basic information and lender type configurations.'}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -172,7 +182,7 @@ const LenderForm = () => {
 
               <div className="flex justify-end">
                 <Button type="submit" className="w-full">
-                  Create Lender
+                  {isEditing ? 'Update Lender' : 'Create Lender'}
                 </Button>
               </div>
             </form>

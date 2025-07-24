@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import InviteModal from "@/components/invites/InviteModal";
 import { useInvite } from "@/contexts/InviteContext";
+import LenderDetailsModal from "@/components/lenders/LenderDetailsModal";
 
 // Mock data for dashboard
 const MOCK_FIRMS = [
@@ -92,6 +93,8 @@ const SuperAdminDashboard = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [lenderSearchTerm, setLenderSearchTerm] = useState('');
+  const [selectedLender, setSelectedLender] = useState<any>(null);
+  const [isLenderModalOpen, setIsLenderModalOpen] = useState(false);
   const { getAllInvites } = useInvite();
   
   const filteredFirms = MOCK_FIRMS.filter(firm => 
@@ -106,8 +109,11 @@ const SuperAdminDashboard = () => {
   const pendingInvites = allInvites.filter(invite => invite.status === 'pending');
 
   const handleViewLender = (id: string) => {
-    // Navigate to lender details or show modal
-    console.log('View lender:', id);
+    const lender = MOCK_LENDERS.find(l => l.id === id);
+    if (lender) {
+      setSelectedLender(lender);
+      setIsLenderModalOpen(true);
+    }
   };
 
   const handleEditLender = (id: string) => {
@@ -374,6 +380,12 @@ const SuperAdminDashboard = () => {
             </Card>
           </TabsContent>
         </Tabs>
+
+        <LenderDetailsModal
+          lender={selectedLender}
+          open={isLenderModalOpen}
+          onOpenChange={setIsLenderModalOpen}
+        />
       </div>
     </DashboardLayout>
   );

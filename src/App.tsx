@@ -18,6 +18,7 @@ import SuperAdminDashboard from './pages/SuperAdmin/Dashboard';
 import SuperAdminFirmDetails from './pages/SuperAdmin/FirmDetails';
 import SuperAdminInviteManagement from './pages/SuperAdmin/InviteManagement';
 import CreateLender from './pages/SuperAdmin/CreateLender';
+import EditLender from './pages/SuperAdmin/EditLender';
 import FirmAdminDashboard from './pages/FirmAdmin/Dashboard';
 import FirmAdminProcessorManagement from './pages/FirmAdmin/ProcessorManagement';
 import ProcessorDashboard from './pages/Processor/Dashboard';
@@ -71,6 +72,14 @@ function App() {
                   element={
                     <ProtectedRoute allowedRoles={['SuperAdmin']}>
                       <CreateLender />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/super-admin/edit-lender/:id" 
+                  element={
+                    <ProtectedRoute allowedRoles={['SuperAdmin']}>
+                      <EditLender />
                     </ProtectedRoute>
                   } 
                 />
