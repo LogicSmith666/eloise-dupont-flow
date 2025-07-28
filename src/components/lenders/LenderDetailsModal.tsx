@@ -159,32 +159,82 @@ const LenderDetailsModal = ({ lender, open, onOpenChange }: LenderDetailsModalPr
                     </div>
 
                     {/* Conditional Industries Section */}
-                    {(config.conditionalRevenues?.length > 0 || config.conditionalIndustries?.length > 0) && (
-                      <>
-                        <Separator className="my-4" />
+                    <Separator className="my-4" />
+                    <div className="space-y-4">
+                      <h5 className="font-medium text-sm">Conditional Industries</h5>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <label className="text-sm font-medium">Conditional Industries</label>
-                          <div className="space-y-1 mt-1">
-                            {config.conditionalRevenues?.map((item: any) => (
-                              <div key={item.industry} className="text-sm">
-                                <Badge variant="outline" className="mr-2">
-                                  {item.industry}
-                                </Badge>
-                                <span className="text-muted-foreground">
-                                  ${item.revenue?.toLocaleString()}
-                                </span>
-                              </div>
-                            )) || config.conditionalIndustries?.map((industry: string) => (
-                              <div key={industry} className="text-sm">
-                                <Badge variant="outline" className="mr-2">
+                          <label className="text-sm font-medium">Conditional Raw Industry</label>
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {config.conditionalIndustries?.length > 0 ? (
+                              config.conditionalIndustries.map((industry: string) => (
+                                <Badge key={industry} variant="outline" className="text-xs">
                                   {industry}
                                 </Badge>
-                              </div>
-                            ))}
+                              ))
+                            ) : (
+                              <span className="text-xs text-muted-foreground">No conditional industries</span>
+                            )}
                           </div>
                         </div>
-                      </>
-                    )}
+
+                        <div>
+                          <label className="text-sm font-medium">Raw Industry Minimum Revenue</label>
+                          <div className="space-y-1 mt-1">
+                            {config.conditionalRevenues?.length > 0 ? (
+                              config.conditionalRevenues.map((item: any) => (
+                                <div key={item.industry} className="text-sm">
+                                  <Badge variant="outline" className="mr-2 text-xs">
+                                    {item.industry}
+                                  </Badge>
+                                  <span className="text-muted-foreground">
+                                    ${item.revenue?.toLocaleString()}
+                                  </span>
+                                </div>
+                              ))
+                            ) : (
+                              <span className="text-xs text-muted-foreground">No revenue requirements</span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="text-sm font-medium">Conditional Filtered Industry</label>
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {config.filteredIndustries?.length > 0 ? (
+                              config.filteredIndustries.map((industry: string) => (
+                                <Badge key={industry} variant="outline" className="text-xs">
+                                  {industry}
+                                </Badge>
+                              ))
+                            ) : (
+                              <span className="text-xs text-muted-foreground">No filtered industries</span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="text-sm font-medium">Conditional Filtered Industry Minimum Revenue</label>
+                          <div className="space-y-1 mt-1">
+                            {config.filteredRevenues?.length > 0 ? (
+                              config.filteredRevenues.map((item: any) => (
+                                <div key={item.industry} className="text-sm">
+                                  <Badge variant="outline" className="mr-2 text-xs">
+                                    {item.industry}
+                                  </Badge>
+                                  <span className="text-muted-foreground">
+                                    ${item.revenue?.toLocaleString()}
+                                  </span>
+                                </div>
+                              ))
+                            ) : (
+                              <span className="text-xs text-muted-foreground">No filtered revenue requirements</span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
