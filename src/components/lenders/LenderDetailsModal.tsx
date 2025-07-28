@@ -144,7 +144,7 @@ const LenderDetailsModal = ({ lender, open, onOpenChange }: LenderDetailsModalPr
                       </>
                     )}
 
-                    {(config.conditionalIndustries?.length > 0 || config.defaultBkPolicy) && (
+                    {(config.conditionalIndustries?.length > 0 || config.defaultBkPolicy || config.bkPolicy) && (
                       <>
                         <Separator className="my-4" />
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -166,11 +166,11 @@ const LenderDetailsModal = ({ lender, open, onOpenChange }: LenderDetailsModalPr
                             </div>
                           )}
                           
-                          {config.defaultBkPolicy && (
+                          {(config.defaultBkPolicy || config.bkPolicy) && (
                             <div>
                               <label className="text-sm font-medium">Default/BK Policy</label>
                               <p className="text-sm text-muted-foreground mt-1">
-                                {config.defaultBkPolicy}
+                                {config.defaultBkPolicy || config.bkPolicy}
                               </p>
                             </div>
                           )}

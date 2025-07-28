@@ -121,9 +121,11 @@ const LenderForm = ({ initialData, isEditing = false }: LenderFormProps) => {
       description: isEditing ? "Lender updated successfully!" : "Lender created successfully!",
     });
     
-    // Reset form
-    form.reset();
-    setLenderTypeConfigs([]);
+    // Reset form only if not editing
+    if (!isEditing) {
+      form.reset();
+      setLenderTypeConfigs([]);
+    }
   };
 
   return (
