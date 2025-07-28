@@ -98,88 +98,90 @@ const LenderDetailsModal = ({ lender, open, onOpenChange }: LenderDetailsModalPr
                       </div>
                     </div>
 
-                    {(config.restrictedStates?.length > 0 || config.restrictedIndustries?.length > 0 || config.restrictedEntityTypes?.length > 0) && (
-                      <>
-                        <Separator className="my-4" />
-                        <div className="space-y-3">
-                          {config.restrictedStates?.length > 0 && (
-                            <div>
-                              <label className="text-sm font-medium">Restricted States</label>
-                              <div className="flex flex-wrap gap-1 mt-1">
-                                {config.restrictedStates.map((state: string) => (
-                                  <Badge key={state} variant="destructive" className="text-xs">
-                                    {state}
-                                  </Badge>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-                          
-                          {config.restrictedIndustries?.length > 0 && (
-                            <div>
-                              <label className="text-sm font-medium">Restricted Industries</label>
-                              <div className="flex flex-wrap gap-1 mt-1">
-                                {config.restrictedIndustries.map((industry: string) => (
-                                  <Badge key={industry} variant="destructive" className="text-xs">
-                                    {industry}
-                                  </Badge>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-
-                          {config.restrictedEntityTypes?.length > 0 && (
-                            <div>
-                              <label className="text-sm font-medium">Restricted Entity Types</label>
-                              <div className="flex flex-wrap gap-1 mt-1">
-                                {config.restrictedEntityTypes.map((entity: string) => (
-                                  <Badge key={entity} variant="destructive" className="text-xs">
-                                    {entity}
-                                  </Badge>
-                                ))}
-                              </div>
-                            </div>
-                          )}
+                    {/* Always show restrictions and policies section */}
+                    <Separator className="my-4" />
+                    <div className="space-y-4">
+                      <h5 className="font-medium text-sm">Restrictions & Policies</h5>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="text-sm font-medium">Restricted States</label>
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {config.restrictedStates?.length > 0 ? (
+                              config.restrictedStates.map((state: string) => (
+                                <Badge key={state} variant="destructive" className="text-xs">
+                                  {state}
+                                </Badge>
+                              ))
+                            ) : (
+                              <span className="text-xs text-muted-foreground">No restrictions</span>
+                            )}
+                          </div>
                         </div>
-                      </>
-                    )}
+                        
+                        <div>
+                          <label className="text-sm font-medium">Restricted Industries</label>
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {config.restrictedIndustries?.length > 0 ? (
+                              config.restrictedIndustries.map((industry: string) => (
+                                <Badge key={industry} variant="destructive" className="text-xs">
+                                  {industry}
+                                </Badge>
+                              ))
+                            ) : (
+                              <span className="text-xs text-muted-foreground">No restrictions</span>
+                            )}
+                          </div>
+                        </div>
 
-                    {(config.conditionalRevenues?.length > 0 || config.conditionalIndustries?.length > 0 || config.defaultBkPolicy || config.bkPolicy) && (
+                        <div>
+                          <label className="text-sm font-medium">Restricted Entity Types</label>
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {config.restrictedEntityTypes?.length > 0 ? (
+                              config.restrictedEntityTypes.map((entity: string) => (
+                                <Badge key={entity} variant="destructive" className="text-xs">
+                                  {entity}
+                                </Badge>
+                              ))
+                            ) : (
+                              <span className="text-xs text-muted-foreground">No restrictions</span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="text-sm font-medium">Default/BK Policy</label>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {config.defaultBkPolicy || config.bkPolicy || 'Not specified'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Conditional Industries Section */}
+                    {(config.conditionalRevenues?.length > 0 || config.conditionalIndustries?.length > 0) && (
                       <>
                         <Separator className="my-4" />
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {(config.conditionalRevenues?.length > 0 || config.conditionalIndustries?.length > 0) && (
-                            <div>
-                              <label className="text-sm font-medium">Conditional Industries</label>
-                              <div className="space-y-1 mt-1">
-                                {config.conditionalRevenues?.map((item: any) => (
-                                  <div key={item.industry} className="text-sm">
-                                    <Badge variant="outline" className="mr-2">
-                                      {item.industry}
-                                    </Badge>
-                                    <span className="text-muted-foreground">
-                                      ${item.revenue?.toLocaleString()}
-                                    </span>
-                                  </div>
-                                )) || config.conditionalIndustries?.map((industry: string) => (
-                                  <div key={industry} className="text-sm">
-                                    <Badge variant="outline" className="mr-2">
-                                      {industry}
-                                    </Badge>
-                                  </div>
-                                ))}
+                        <div>
+                          <label className="text-sm font-medium">Conditional Industries</label>
+                          <div className="space-y-1 mt-1">
+                            {config.conditionalRevenues?.map((item: any) => (
+                              <div key={item.industry} className="text-sm">
+                                <Badge variant="outline" className="mr-2">
+                                  {item.industry}
+                                </Badge>
+                                <span className="text-muted-foreground">
+                                  ${item.revenue?.toLocaleString()}
+                                </span>
                               </div>
-                            </div>
-                          )}
-                          
-                          {(config.defaultBkPolicy || config.bkPolicy) && (
-                            <div>
-                              <label className="text-sm font-medium">Default/BK Policy</label>
-                              <p className="text-sm text-muted-foreground mt-1">
-                                {config.defaultBkPolicy || config.bkPolicy}
-                              </p>
-                            </div>
-                          )}
+                            )) || config.conditionalIndustries?.map((industry: string) => (
+                              <div key={industry} className="text-sm">
+                                <Badge variant="outline" className="mr-2">
+                                  {industry}
+                                </Badge>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       </>
                     )}
