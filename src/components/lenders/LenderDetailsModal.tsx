@@ -144,15 +144,15 @@ const LenderDetailsModal = ({ lender, open, onOpenChange }: LenderDetailsModalPr
                       </>
                     )}
 
-                    {(config.conditionalIndustries?.length > 0 || config.defaultBkPolicy || config.bkPolicy) && (
+                    {(config.conditionalRevenues?.length > 0 || config.conditionalIndustries?.length > 0 || config.defaultBkPolicy || config.bkPolicy) && (
                       <>
                         <Separator className="my-4" />
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {config.conditionalIndustries?.length > 0 && (
+                          {(config.conditionalRevenues?.length > 0 || config.conditionalIndustries?.length > 0) && (
                             <div>
                               <label className="text-sm font-medium">Conditional Industries</label>
                               <div className="space-y-1 mt-1">
-                                {config.conditionalIndustries.map((item: any) => (
+                                {config.conditionalRevenues?.map((item: any) => (
                                   <div key={item.industry} className="text-sm">
                                     <Badge variant="outline" className="mr-2">
                                       {item.industry}
@@ -160,6 +160,12 @@ const LenderDetailsModal = ({ lender, open, onOpenChange }: LenderDetailsModalPr
                                     <span className="text-muted-foreground">
                                       ${item.revenue?.toLocaleString()}
                                     </span>
+                                  </div>
+                                )) || config.conditionalIndustries?.map((industry: string) => (
+                                  <div key={industry} className="text-sm">
+                                    <Badge variant="outline" className="mr-2">
+                                      {industry}
+                                    </Badge>
                                   </div>
                                 ))}
                               </div>

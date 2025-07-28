@@ -26,11 +26,12 @@ const getLenderById = (id: string) => {
           restrictedStates: ['CA', 'NY'],
           restrictedIndustries: ['Gambling'],
           restrictedEntityTypes: ['Non-Profit'],
-          conditionalIndustries: [
+          conditionalIndustries: ['Agriculture', 'Agriculture - Cattle Ranch'],
+          bkPolicy: 'case-by-case',
+          conditionalRevenues: [
             { industry: 'Agriculture', revenue: 75000 },
             { industry: 'Agriculture - Cattle Ranch', revenue: 100000 }
-          ],
-          defaultBkPolicy: 'Case-by-Case'
+          ]
         }
       ]
     },
@@ -48,7 +49,13 @@ const getLenderById = (id: string) => {
           minTib: 9,
           minRevenue: 40000,
           minFico: 680,
-          maxNsfs: 2
+          maxNsfs: 2,
+          restrictedStates: [],
+          restrictedIndustries: [],
+          restrictedEntityTypes: [],
+          conditionalIndustries: [],
+          bkPolicy: 'flexible',
+          conditionalRevenues: []
         }
       ]
     },
@@ -66,7 +73,13 @@ const getLenderById = (id: string) => {
           minTib: 3,
           minRevenue: 15000,
           minFico: 600,
-          maxNsfs: 5
+          maxNsfs: 5,
+          restrictedStates: [],
+          restrictedIndustries: [],
+          restrictedEntityTypes: [],
+          conditionalIndustries: [],
+          bkPolicy: 'strict',
+          conditionalRevenues: []
         }
       ]
     }
