@@ -4,7 +4,7 @@ import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
-import { Upload, ArrowRight, Search, FileText, FormInput } from "lucide-react";
+import { Upload, ArrowRight, Search, FileText, FormInput, CheckSquare, Square, Loader2, Target } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { 
   Select,
@@ -13,6 +13,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
 
 // Mock data for processor dashboard (existing deals)
 const MOCK_APPLICATIONS = [
@@ -65,6 +67,9 @@ const ProcessorDashboard = () => {
   const [timePeriod, setTimePeriod] = useState<keyof typeof TIME_PERIODS>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [createdDeals, setCreatedDeals] = useState<any[]>([]);
+  const [selectedDeals, setSelectedDeals] = useState<string[]>([]);
+  const [isMatching, setIsMatching] = useState(false);
+  const [matchResults, setMatchResults] = useState<any>(null);
   
   // Load created deals from localStorage
   useEffect(() => {
@@ -94,6 +99,64 @@ const ProcessorDashboard = () => {
 
   const handleCreateDealForm = () => {
     navigate('/processor/create-deal-form');
+  };
+
+  const handleSelectAllDeals = () => {
+    if (selectedDeals.length === filteredApplications.length) {
+      setSelectedDeals([]);
+    } else {
+      setSelectedDeals(filteredApplications.map(deal => deal.id));
+    }
+  };
+
+  const handleSelectDeal = (dealId: string) => {
+    setSelectedDeals(prev => 
+      prev.includes(dealId) 
+        ? prev.filter(id => id !== dealId)
+        : [...prev, dealId]
+    );
+  };
+
+  const handleMatchLenders = async () => {
+    if (selectedDeals.length === 0) return;
+    
+    setIsMatching(true);
+    
+    // Simulate API call with dummy data
+    setTimeout(() => {
+      const dummyResults = {
+        processor_id: "f6c88059-d8f5-469d-9090-11b1eb07c627",
+        total_deals_processed: selectedDeals.length,
+        total_lenders_checked: 7,
+        results: selectedDeals.map(dealId => {
+          const deal = filteredApplications.find(d => d.id === dealId);
+          return {
+            deal_id: dealId,
+            deal_name: deal?.businessName || "Unknown Deal",
+            lender_matches: [
+              {
+                lender_name: "Atiq Khan Capital",
+                lender_type: "STRAIGHT",
+                feedback: ["All criteria passed - Deal matches!"]
+              },
+              {
+                lender_name: "Capital One Business",
+                lender_type: "LINE_OF_CREDITS",
+                feedback: ["Position outside acceptable range", "FICO score too low", "Time in business insufficient"]
+              },
+              {
+                lender_name: "High Risk Ventures",
+                lender_type: "HIGH_RISK",
+                feedback: ["Revenue requirements not met", "State restrictions apply"]
+              }
+            ]
+          };
+        })
+      };
+      
+      setMatchResults(dummyResults);
+      setIsMatching(false);
+    }, 2000);
   };
   
   return (
@@ -233,16 +296,70 @@ const ProcessorDashboard = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <DealListTable deals={filteredApplications} navigate={navigate} />
+            {selectedDeals.length > 0 && (
+              <div className="mb-4 p-4 bg-muted/50 rounded-lg">
+                <div className="flex flex-col space-y-3 md:flex-row md:items-center md:justify-between md:space-y-0">
+                  <div className="flex items-center space-x-2">
+                    <Target className="h-4 w-4 text-primary" />
+                    <span className="text-sm font-medium">
+                      {selectedDeals.length} deal{selectedDeals.length > 1 ? 's' : ''} selected
+                    </span>
+                  </div>
+                  <Button 
+                    onClick={handleMatchLenders} 
+                    disabled={isMatching}
+                    className="w-full md:w-auto"
+                  >
+                    {isMatching ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Matching Lenders...
+                      </>
+                    ) : (
+                      <>
+                        <Target className="mr-2 h-4 w-4" />
+                        Match with Lenders
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            )}
+            <DealListTable 
+              deals={filteredApplications} 
+              navigate={navigate}
+              selectedDeals={selectedDeals}
+              onSelectDeal={handleSelectDeal}
+              onSelectAll={handleSelectAllDeals}
+            />
           </CardContent>
         </Card>
+
+        {matchResults && (
+          <LenderMatchResults 
+            results={matchResults} 
+            onClose={() => setMatchResults(null)} 
+          />
+        )}
       </div>
     </DashboardLayout>
   );
 };
 
 // Updated Mobile-responsive deal list table component
-const DealListTable = ({ deals, navigate }: { deals: any[], navigate: (path: string) => void }) => {
+const DealListTable = ({ 
+  deals, 
+  navigate, 
+  selectedDeals = [], 
+  onSelectDeal, 
+  onSelectAll 
+}: { 
+  deals: any[], 
+  navigate: (path: string) => void,
+  selectedDeals?: string[],
+  onSelectDeal?: (dealId: string) => void,
+  onSelectAll?: () => void
+}) => {
   const handleViewDeal = (deal: any) => {
     // Check if it's a created deal (has formData) or legacy deal
     if (deal.formData) {
@@ -256,19 +373,47 @@ const DealListTable = ({ deals, navigate }: { deals: any[], navigate: (path: str
     <div className="space-y-4">
       {/* Desktop view */}
       <div className="hidden md:block rounded-md border">
-        <div className="grid grid-cols-4 p-4 font-medium text-sm bg-muted/50">
-          <div>Business Name</div>
+        <div className="grid grid-cols-5 p-4 font-medium text-sm bg-muted/50">
+          <div className="flex items-center space-x-2">
+            {onSelectAll && (
+              <Checkbox 
+                checked={selectedDeals.length === deals.length && deals.length > 0}
+                onCheckedChange={onSelectAll}
+              />
+            )}
+            <span>Business Name</span>
+          </div>
           <div>Amount</div>
           <div>Date</div>
+          <div>Status</div>
           <div className="text-right">Actions</div>
         </div>
         
         {deals.length > 0 ? (
           deals.map(deal => (
-            <div key={deal.id} className="grid grid-cols-4 p-4 border-t items-center text-sm">
-              <div className="font-medium">{deal.businessName}</div>
+            <div key={deal.id} className="grid grid-cols-5 p-4 border-t items-center text-sm">
+              <div className="flex items-center space-x-2">
+                {onSelectDeal && (
+                  <Checkbox 
+                    checked={selectedDeals.includes(deal.id)}
+                    onCheckedChange={() => onSelectDeal(deal.id)}
+                  />
+                )}
+                <span className="font-medium">{deal.businessName}</span>
+              </div>
               <div>{deal.amount}</div>
               <div>{deal.date}</div>
+              <div>
+                <Badge 
+                  variant={
+                    deal.status === 'Approved' ? 'default' : 
+                    deal.status === 'Processing' ? 'secondary' : 
+                    'destructive'
+                  }
+                >
+                  {deal.status}
+                </Badge>
+              </div>
               <div className="text-right">
                 <Button 
                   variant="ghost" 
@@ -295,10 +440,27 @@ const DealListTable = ({ deals, navigate }: { deals: any[], navigate: (path: str
             <Card key={deal.id} className="p-4">
               <div className="space-y-3">
                 <div className="flex justify-between items-start">
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-medium text-sm truncate">{deal.businessName}</h4>
-                    <p className="text-sm text-muted-foreground">{deal.amount}</p>
+                  <div className="flex items-center space-x-2 flex-1 min-w-0">
+                    {onSelectDeal && (
+                      <Checkbox 
+                        checked={selectedDeals.includes(deal.id)}
+                        onCheckedChange={() => onSelectDeal(deal.id)}
+                      />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-medium text-sm truncate">{deal.businessName}</h4>
+                      <p className="text-sm text-muted-foreground">{deal.amount}</p>
+                    </div>
                   </div>
+                  <Badge 
+                    variant={
+                      deal.status === 'Approved' ? 'default' : 
+                      deal.status === 'Processing' ? 'secondary' : 
+                      'destructive'
+                    }
+                  >
+                    {deal.status}
+                  </Badge>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-xs text-muted-foreground">{deal.date}</span>
@@ -321,6 +483,66 @@ const DealListTable = ({ deals, navigate }: { deals: any[], navigate: (path: str
         )}
       </div>
     </div>
+  );
+};
+
+// Lender Match Results Component
+const LenderMatchResults = ({ results, onClose }: { results: any, onClose: () => void }) => {
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="text-lg md:text-xl">Lender Matching Results</CardTitle>
+            <CardDescription className="text-sm">
+              Processed {results.total_deals_processed} deal{results.total_deals_processed > 1 ? 's' : ''} • 
+              Checked {results.total_lenders_checked} lenders
+            </CardDescription>
+          </div>
+          <Button variant="outline" size="sm" onClick={onClose}>
+            Close
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-6">
+          {results.results.map((dealResult: any) => (
+            <div key={dealResult.deal_id} className="space-y-4">
+              <div className="flex items-center space-x-2 pb-2 border-b">
+                <FileText className="h-4 w-4 text-primary" />
+                <h3 className="font-semibold text-base">{dealResult.deal_name}</h3>
+              </div>
+              
+              <div className="grid gap-3">
+                {dealResult.lender_matches.map((match: any, index: number) => (
+                  <div key={index} className="border rounded-lg p-4 space-y-3 hover:bg-muted/50 transition-colors">
+                    <div className="flex flex-col space-y-2 md:flex-row md:items-center md:justify-between md:space-y-0">
+                      <div className="space-y-1">
+                        <h4 className="font-medium text-sm">{match.lender_name}</h4>
+                        <Badge variant="outline" className="text-xs">
+                          {match.lender_type.replace('_', ' ')}
+                        </Badge>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Feedback</p>
+                      <div className="space-y-1">
+                        {match.feedback.map((feedback: string, feedbackIndex: number) => (
+                          <p key={feedbackIndex} className="text-sm text-muted-foreground leading-relaxed">
+                            • {feedback}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
