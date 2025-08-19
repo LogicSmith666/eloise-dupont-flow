@@ -22,6 +22,7 @@ import EditLender from './pages/SuperAdmin/EditLender';
 import FirmAdminDashboard from './pages/FirmAdmin/Dashboard';
 import FirmAdminProcessorManagement from './pages/FirmAdmin/ProcessorManagement';
 import ProcessorDashboard from './pages/Processor/Dashboard';
+import ProcessorLenderMatchResults from './pages/Processor/LenderMatchResults';
 import BrokerUploadDocuments from './pages/Broker/UploadDocuments';
 import BrokerCreateDealForm from './pages/Broker/CreateDealForm';
 import BrokerBusinessProfiles from './pages/Broker/BusinessProfiles';
@@ -108,6 +109,14 @@ function App() {
                   element={
                     <ProtectedRoute allowedRoles={['Processor']}>
                       <ProcessorDashboard />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/processor/lender-match-results" 
+                  element={
+                    <ProtectedRoute allowedRoles={['Processor']}>
+                      <ProcessorLenderMatchResults />
                     </ProtectedRoute>
                   } 
                 />

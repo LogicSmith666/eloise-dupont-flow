@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -69,7 +68,6 @@ const ProcessorDashboard = () => {
   const [createdDeals, setCreatedDeals] = useState<any[]>([]);
   const [selectedDeals, setSelectedDeals] = useState<string[]>([]);
   const [isMatching, setIsMatching] = useState(false);
-  const [matchResults, setMatchResults] = useState<any>(null);
   
   // Load created deals from localStorage
   useEffect(() => {
@@ -139,16 +137,19 @@ const ProcessorDashboard = () => {
               {
                 lender_name: "Atiq Khan Capital",
                 lender_type: "STRAIGHT",
+                overall_match: true,
                 feedback: ["All criteria passed - Deal matches!"]
               },
               {
                 lender_name: "Capital One Business",
                 lender_type: "LINE_OF_CREDITS",
+                overall_match: false,
                 feedback: ["Position outside acceptable range", "FICO score too low", "Time in business insufficient"]
               },
               {
                 lender_name: "High Risk Ventures",
                 lender_type: "HIGH_RISK",
+                overall_match: false,
                 feedback: ["Revenue requirements not met", "State restrictions apply"]
               }
             ]
@@ -156,8 +157,16 @@ const ProcessorDashboard = () => {
         })
       };
       
-      console.log("Setting match results:", dummyResults);
-      setMatchResults(dummyResults);
+      console.log("Redirecting to results page with:", dummyResults);
+      
+      // Store results in localStorage as backup
+      localStorage.setItem('lenderMatchResults', JSON.stringify(dummyResults));
+      
+      // Navigate to results page with state
+      navigate('/processor/lender-match-results', { 
+        state: { results: dummyResults } 
+      });
+      
       setIsMatching(false);
     } catch (error) {
       console.error("Error matching lenders:", error);
@@ -340,13 +349,6 @@ const ProcessorDashboard = () => {
             />
           </CardContent>
         </Card>
-
-        {matchResults && (
-          <LenderMatchResults 
-            results={matchResults} 
-            onClose={() => setMatchResults(null)} 
-          />
-        )}
       </div>
     </DashboardLayout>
   );
@@ -489,66 +491,6 @@ const DealListTable = ({
         )}
       </div>
     </div>
-  );
-};
-
-// Lender Match Results Component
-const LenderMatchResults = ({ results, onClose }: { results: any, onClose: () => void }) => {
-  return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="text-lg md:text-xl">Lender Matching Results</CardTitle>
-            <CardDescription className="text-sm">
-              Processed {results.total_deals_processed} deal{results.total_deals_processed > 1 ? 's' : ''} • 
-              Checked {results.total_lenders_checked} lenders
-            </CardDescription>
-          </div>
-          <Button variant="outline" size="sm" onClick={onClose}>
-            Close
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-6">
-          {results.results.map((dealResult: any) => (
-            <div key={dealResult.deal_id} className="space-y-4">
-              <div className="flex items-center space-x-2 pb-2 border-b">
-                <FileText className="h-4 w-4 text-primary" />
-                <h3 className="font-semibold text-base">{dealResult.deal_name}</h3>
-              </div>
-              
-              <div className="grid gap-3">
-                {dealResult.lender_matches.map((match: any, index: number) => (
-                  <div key={index} className="border rounded-lg p-4 space-y-3 hover:bg-muted/50 transition-colors">
-                    <div className="flex flex-col space-y-2 md:flex-row md:items-center md:justify-between md:space-y-0">
-                      <div className="space-y-1">
-                        <h4 className="font-medium text-sm">{match.lender_name}</h4>
-                        <Badge variant="outline" className="text-xs">
-                          {match.lender_type.replace('_', ' ')}
-                        </Badge>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Feedback</p>
-                      <div className="space-y-1">
-                        {match.feedback.map((feedback: string, feedbackIndex: number) => (
-                          <p key={feedbackIndex} className="text-sm text-muted-foreground leading-relaxed">
-                            • {feedback}
-                          </p>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
   );
 };
 
