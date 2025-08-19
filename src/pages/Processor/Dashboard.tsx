@@ -122,8 +122,10 @@ const ProcessorDashboard = () => {
     
     setIsMatching(true);
     
-    // Simulate API call with dummy data
-    setTimeout(() => {
+    try {
+      // Simulate API call with dummy data
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
       const dummyResults = {
         processor_id: "f6c88059-d8f5-469d-9090-11b1eb07c627",
         total_deals_processed: selectedDeals.length,
@@ -154,9 +156,13 @@ const ProcessorDashboard = () => {
         })
       };
       
+      console.log("Setting match results:", dummyResults);
       setMatchResults(dummyResults);
       setIsMatching(false);
-    }, 2000);
+    } catch (error) {
+      console.error("Error matching lenders:", error);
+      setIsMatching(false);
+    }
   };
   
   return (
