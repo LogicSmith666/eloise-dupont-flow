@@ -157,19 +157,21 @@ const ProcessorDashboard = () => {
         })
       };
       
-      console.log("Redirecting to results page with:", dummyResults);
+      // Clear selected deals first
+      setSelectedDeals([]);
       
       // Store results in localStorage as backup
       localStorage.setItem('lenderMatchResults', JSON.stringify(dummyResults));
       
-      // Navigate to results page with state
+      // Navigate to results page with state - force navigation
       navigate('/processor/lender-match-results', { 
-        state: { results: dummyResults } 
+        state: { results: dummyResults },
+        replace: true
       });
       
-      setIsMatching(false);
     } catch (error) {
       console.error("Error matching lenders:", error);
+    } finally {
       setIsMatching(false);
     }
   };
