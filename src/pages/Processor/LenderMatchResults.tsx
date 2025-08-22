@@ -5,12 +5,15 @@ import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { FileText, ArrowLeft, Target } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { FileText, ArrowLeft, Target, Filter } from "lucide-react";
 
 const LenderMatchResults = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [results, setResults] = useState<any>(null);
+  const [lenderTypeFilter, setLenderTypeFilter] = useState<string>("all");
+  const [matchStatusFilter, setMatchStatusFilter] = useState<string>("all");
 
   useEffect(() => {
     // Get results from location state or localStorage as fallback
@@ -27,6 +30,41 @@ const LenderMatchResults = () => {
     // Clean up localStorage after getting results
     localStorage.removeItem('lenderMatchResults');
   }, [location, navigate]);
+
+  // Get unique lender types for filter dropdown
+  const getUniqueLenderTypes = () => {
+    if (!results) return [];
+    const types = new Set<string>();
+    results.results.forEach((dealResult: any) => {
+      dealResult.lender_matches.forEach((match: any) => {
+        types.add(match.lender_type);
+      });
+    });
+    return Array.from(types);
+  };
+
+  // Filter lender matches based on selected filters
+  const getFilteredResults = () => {
+    if (!results) return null;
+    
+    return {
+      ...results,
+      results: results.results.map((dealResult: any) => ({
+        ...dealResult,
+        lender_matches: dealResult.lender_matches.filter((match: any) => {
+          const typeMatch = lenderTypeFilter === "all" || match.lender_type === lenderTypeFilter;
+          const statusMatch = matchStatusFilter === "all" || 
+            (matchStatusFilter === "matched" && match.overall_match) ||
+            (matchStatusFilter === "not-matched" && !match.overall_match);
+          
+          return typeMatch && statusMatch;
+        })
+      })).filter((dealResult: any) => dealResult.lender_matches.length > 0)
+    };
+  };
+
+  const filteredResults = getFilteredResults();
+  const uniqueLenderTypes = getUniqueLenderTypes();
 
   const handleBackToDashboard = () => {
     navigate('/processor/dashboard');
@@ -68,8 +106,65 @@ const LenderMatchResults = () => {
           </div>
         </div>
 
+        {/* Filters Section */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center space-x-2">
+              <Filter className="h-4 w-4" />
+              <CardTitle className="text-base">Filters</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex-1">
+                <label className="text-sm font-medium mb-2 block">Lender Type</label>
+                <Select value={lenderTypeFilter} onValueChange={setLenderTypeFilter}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="All Types" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Types</SelectItem>
+                    {uniqueLenderTypes.map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {type.replace('_', ' ')}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="flex-1">
+                <label className="text-sm font-medium mb-2 block">Match Status</label>
+                <Select value={matchStatusFilter} onValueChange={setMatchStatusFilter}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="All Results" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Results</SelectItem>
+                    <SelectItem value="matched">Matched Only</SelectItem>
+                    <SelectItem value="not-matched">Not Matched Only</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="flex items-end">
+                <Button 
+                  variant="outline" 
+                  onClick={() => {
+                    setLenderTypeFilter("all");
+                    setMatchStatusFilter("all");
+                  }}
+                >
+                  Clear Filters
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         <div className="space-y-6">
-          {results.results.map((dealResult: any) => (
+          {filteredResults && filteredResults.results.length > 0 ? (
+            filteredResults.results.map((dealResult: any) => (
             <Card key={dealResult.deal_id}>
               <CardHeader>
                 <div className="flex items-center space-x-2 pb-2">
@@ -115,7 +210,14 @@ const LenderMatchResults = () => {
                 </div>
               </CardContent>
             </Card>
-          ))}
+          ))
+          ) : (
+            <Card>
+              <CardContent className="text-center py-8">
+                <p className="text-muted-foreground">No results match the current filters.</p>
+              </CardContent>
+            </Card>
+          )}
         </div>
 
         <div className="flex justify-center pt-6">
